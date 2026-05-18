@@ -1,7 +1,7 @@
 import React from "react";
 interface TextProps {
   textString: string;
-  size?: "sm" | "base" | "lg" | "xl" | "2xl" | "3xl" | "4xl";
+  size?: string;
   color?: string;
   weigth?: "thin" | "normal" | "medium" | "bold" | "extrabold" | "black";
   underline?: false | true;
@@ -20,18 +20,6 @@ export default function Text({
   transitionTime = 0.2,
   cursor = "default",
 }: TextProps) {
-  const sizeClasses = {
-    sm: "text-sm",
-    base: "text-base",
-    lg: "text-lg",
-    xl: "text-xl",
-    "2xl": "text-2xl",
-    "3xl": "text-3xl",
-    "4xl": "text-4xl",
-    h1: "text-4xl",
-    h2: "text-3xl",
-    h3: "text-2xl",
-  };
   const weigthClasses = {
     thin: "font-thin",
     normal: "font-normal",
@@ -49,7 +37,7 @@ export default function Text({
     <>
       <p
         className={`
-          ${sizeClasses[size]}
+          text-${size}
           ${weigthClasses[weigth]}
           ${underline ? "underline" : ""}
           text-[var(--generic-base-color)]
