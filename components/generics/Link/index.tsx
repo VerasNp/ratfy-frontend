@@ -14,7 +14,7 @@ interface LinkProps {
 export default Link (
   {pathName,
   text,
-  pref=true;
+  pref=true,
   queryKey="",
   size="base",
   color="--text-primary"
