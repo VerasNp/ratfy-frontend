@@ -3,43 +3,16 @@ import Image from "next/image";
 
 export default function Home() {
 	return (
-		<>
-			<Input
-				variant="filled"
-				placeholder="O que você quer ouvir?"
-				fullWidth
-			/>
-			<Input
-				label="E-mail"
-				type="email"
-				state="error"
-				helperText="E-mail inválido"
-				fullWidth
-			/>
-			<Input
-				label="E-mail"
-				type="email"
-				state="success"
-				helperText="E-mail disponível"
-				fullWidth
-			/>
-			<Input
-				label="Senha"
-				type="password"
-				fullWidth
-			/>
-			<Input
-				variant="ghost"
-				size="sm"
-				placeholder="Buscar playlist..."
-				fullWidth
-			/>
-			<Input
-				label="Nome de usuário"
-				variant="filled"
-				helperText="Será exibido no seu perfil"
-				fullWidth
-			/>
-		</>
+		<div className="flex justify-center h-100 bg-">
+			<div className="w-64 content-center">
+				<Input
+					variant="default"
+					placeholder="Buscar na conta ou ajuda"
+					fullWidth
+					leftIcon
+					rightIcon
+				/>
+			</div>
+		</div>
 	);
 }

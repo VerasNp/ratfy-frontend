@@ -26,8 +26,7 @@ export interface InputProps extends Omit<
 
 const variantStyles: Record<InputVariant, string> = {
 	default:
-		"bg-transparent border border-spotify-muted text-spotify-white " +
-		"placeholder:text-spotify-muted " +
+		"bg-[var(--bg-elevated-main)] text-primary border-[var(--bg-secondary)]" +
 		"focus:border-spotify-green focus:ring-1 focus:ring-spotify-green",
 	filled:
 		"bg-spotify-elevated border border-transparent text-spotify-white " +
@@ -64,7 +63,7 @@ const helperTextColorStyles: Record<InputState, string> = {
 	success: "text-green-400",
 	loading: "text-spotify-muted",
 };
-
+const EMPTY_ICON = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'/%3E`;
 const Input = forwardRef<HTMLInputElement, InputProps>(
 	(
 		{
@@ -106,11 +105,11 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
 					{leftIcon && (
 						<span
 							className={cn(
-								"absolute left-3 flex items-center justify-center text-spotify-muted pointer-events-none",
+								"absolute left-3 flex items-center justify-center text-spotify-muted pointer-events-none bg-white",
 								iconSizeStyles[size],
 							)}
 						>
-							{leftIcon}
+							<img src={EMPTY_ICON} width="100%" height="100%" />
 						</span>
 					)}
 					<input
@@ -133,11 +132,11 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
 					{rightIcon && (
 						<span
 							className={cn(
-								"absolute right-3 flex items-center justify-center text-spotify-muted",
+								"absolute right-3 flex items-center justify-center text-spotify-muted bg-white",
 								iconSizeStyles[size],
 							)}
 						>
-							{rightIcon}
+							<img src={EMPTY_ICON} width="100%" height="100%" />
 						</span>
 					)}
 				</div>
