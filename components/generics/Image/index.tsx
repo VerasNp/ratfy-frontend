@@ -1,20 +1,20 @@
 import React from "react";
 import Image from "next/image";
 
-interface CustomImageProps {
+interface ImageProps {
   src: string;
   alt: string;
   size?: number;
   shape?: "square" | "rounded";
   className?: string;
 }
-export default function CustomImage({
+export default function Image({
   src,
   alt,
   size = 64, // Tamanho padrão se não for informado
   shape = "square",
   className = "",
-}: CustomImageProps) {
+}: ImageProps) {
   // Dicionário de formatos usando classes do Tailwind
   const shapeClasses = {
     square: "rounded-none",
