@@ -1,5 +1,5 @@
 import React from "react";
-import Image from "next/image";
+import NextImage from "next/image";
 
 interface ImageProps {
   src: string;
