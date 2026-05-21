@@ -8,6 +8,7 @@
   --bg-brand: #1ed760;
   --bg-primary: #fff;
   --text-primary: #fff;
+  --text-secondary: #7c7c7c;
 }
 
 @theme inline {
@@ -18,6 +19,7 @@
   --color-bg-brand: var(--bg-brand);
   --color-bg-primary: var(--bg-primary);
   --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
