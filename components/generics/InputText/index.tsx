@@ -1,6 +1,6 @@
 "use client";
 
-import { forwardRef, InputHTMLAttributes, ReactNode, useState } from "react";
+import { InputHTMLAttributes, useState } from "react";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import Icon, { IconComponent } from "../Icon";
@@ -39,6 +39,8 @@ export interface InputProps extends Omit<
 	rightIcon?: InputRightIconProps;
 	fullWidth?: boolean;
 	clearable?: boolean;
+	value?: string;
+	onRightIconClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
 const variantStyles: Record<InputVariant, string> = {
@@ -126,10 +128,20 @@ export default function InputText({
 	id,
 	disabled,
 	clearable = false,
+	value,
+	defaultValue,
+	onChange,
+	onFocus,
+	onBlur,
+	onRightIconClick,
 	...props
 }: InputProps) {
+	const isControlled = value !== undefined;
 	const [isFocused, setIsFocused] = useState(false);
-	const [inputValue, setInputValue] = useState("");
+	const [internalValue, setInternalValue] = useState<string>(
+		(defaultValue as string) ?? "",
+	);
+	const currentValue = isControlled ? value : internalValue;
 	const inputId = id ?? label?.toLowerCase().replace(/\s+/g, "-");
 	return (
 		<div
@@ -164,28 +176,24 @@ export default function InputText({
 				)}
 				<input
 					style={{
-						marginLeft: leftIcon
-							? `${iconSizeStyles[size].leftMarginValue * 0.25}rem`
-							: undefined,
-						marginRight: rightIcon
-							? `${iconSizeStyles[size].rightMarginValue * 0.25}rem`
-							: undefined,
+						marginLeft: `${iconSizeStyles[size].leftMarginValue * 0.25}rem`,
+						marginRight: `${iconSizeStyles[size].rightMarginValue * 0.25}rem`,
 					}}
 					id={inputId}
 					disabled={disabled || state === "loading"}
 					onFocus={(e) => {
 						setIsFocused(true);
-						props.onFocus?.(e);
+						onFocus?.(e);
 					}}
 					onBlur={(e) => {
 						setIsFocused(false);
-						props.onBlur?.(e);
+						onBlur?.(e);
 					}}
 					onChange={(e) => {
-						setInputValue(e.target.value);
-						props.onChange?.(e);
+						if (!isControlled) setInternalValue(e.target.value);
+						onChange?.(e);
 					}}
-					value={inputValue}
+					value={currentValue}
 					className={cn(
 						"w-full rounded-md outline-none transition-all duration-200",
 						sizeStyles[size],
@@ -199,8 +207,8 @@ export default function InputText({
 						<button
 							style={{
 								marginRight: `${iconSizeStyles[size].clearButtonMarginValue * 0.25}rem`,
-								opacity: inputValue ? 1 : 0,
-								pointerEvents: inputValue ? "auto" : "none",
+								opacity: currentValue ? 1 : 0,
+								pointerEvents: currentValue ? "auto" : "none",
 							}}
 							type="button"
 							className={cn(
@@ -209,9 +217,10 @@ export default function InputText({
 								`w-${iconSizeStyles[size].sizeW}`,
 							)}
 							onClick={() => {
-								if (inputValue) {
-									setInputValue("");
-								}
+								if (!isControlled) setInternalValue("");
+								onChange?.({
+									target: { value: "" },
+								} as React.ChangeEvent<HTMLInputElement>);
 							}}
 						>
 							<Icon src={LucideX} />
@@ -220,7 +229,7 @@ export default function InputText({
 							<div
 								style={{
 									height: `${iconSizeStyles[size].sizeH * 0.2}rem`,
-									opacity: inputValue ? 1 : 0,
+									opacity: currentValue ? 1 : 0,
 								}}
 							>
 								<span className="before:content-[''] before:block before:-translate-x-1/2 before:w-px before:bg-gray-400 before:h-full"></span>
@@ -228,7 +237,7 @@ export default function InputText({
 						)}
 					</>
 				)}
-				{rightIcon && rightIcon.action === "link" && (
+				{rightIcon && rightIcon.action === "link" ? (
 					<a href={rightIcon.link} className="contents">
 						<span
 							style={{
@@ -246,7 +255,27 @@ export default function InputText({
 							<Icon src={rightIcon.icon} />
 						</span>
 					</a>
-				)}
+				) : rightIcon && rightIcon.action === "button" ? (
+					<button
+						type="button"
+						className={cn(
+							"flex items-center justify-center text-gray-400 hover:text-white transition-colors ease-linear duration-400 cursor-pointer",
+							`h-${iconSizeStyles[size].sizeH}`,
+							`w-${iconSizeStyles[size].sizeW}`,
+						)}
+						style={{
+							marginRight: `${iconSizeStyles[size].rightMarginValue * 0.25}rem`,
+							marginLeft: clearable
+								? `${iconSizeStyles[size].clearButtonMarginValue * 0.25}rem`
+								: undefined,
+						}}
+						onClick={(e) => {
+							onRightIconClick?.(e);
+						}}
+					>
+						<Icon src={rightIcon.icon} />
+					</button>
+				) : null}
 			</div>
 			{helperText && (
 				<p
