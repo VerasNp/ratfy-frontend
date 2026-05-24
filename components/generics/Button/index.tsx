@@ -3,6 +3,7 @@ import { ComponentProps } from "react";
 interface ButtonProps extends ComponentProps<"button"> {
   variant?: 'primary' | 'secondary' | 'brand' | 'ghost';
   size?: 'sm' | 'md' | 'lg' | 'icon';
+  label?: string;
 }
 
 const variantStyles = {
@@ -23,6 +24,8 @@ export default function Button({
   className = '',
   variant = 'primary',
   size = 'md',
+  type = 'button',
+  label,
   children,
   ...props
 }: ButtonProps) {
@@ -37,6 +40,8 @@ export default function Button({
 
   return (
     <button
+      type={type}
+      aria-label={label}
       className={classes}
       {...props}
     >
