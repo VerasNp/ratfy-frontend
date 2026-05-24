@@ -1,7 +1,7 @@
 import { StaticImageData } from "next/image";
 import { ComponentProps, ElementType } from "react";
 
-type IconComponent = ElementType<{
+export type IconComponent = ElementType<{
 	size?: number | string;
 	className?: string;
 	style?: React.CSSProperties;
