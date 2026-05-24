@@ -1,64 +1,71 @@
 "use client";
 
-import { LucideChevronDown } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 
 type DropdownItem = {
-	icon?: React.ReactNode;
-	item: React.ReactNode;
+    icon?: React.ReactNode;
+    item: React.ReactNode;
 };
 
 interface DropdownProps {
-	itens?: DropdownItem[];
-	trigger?: string;
-	triggerIcon?: React.ReactNode;
+    itens?: DropdownItem[];
+    triggerComponent?: React.ReactNode;
 }
 
 export default function Dropdown({
-	itens,
-	trigger = "Menu",
-	triggerIcon,
+    itens,
+    triggerComponent
 }: DropdownProps) {
-	const [isOpen, setIsOpen] = useState(false);
+    const [isOpen, setIsOpen] = useState(false);
+    const dropdownRef = useRef<HTMLDivElement>(null);
 
-	const handleClose = () => setIsOpen(false);
+    const handleClose = () => setIsOpen(false);
 
-	return (
-		<div className="relative inline-block w-full">
-			<button
-				onClick={() => setIsOpen(!isOpen)}
-				className="w-full px-4 py-2 bg-[var(--bg-elevated-main)] border border-[var(--bg-secondary)] rounded-md text-white hover:bg-[var(--bg-elevated-hover)] transition-colors duration-200 flex items-center justify-between"
-			>
-				<span className="flex items-center gap-2">
-					{triggerIcon}
-					{trigger}
-				</span>
-				<LucideChevronDown
-					size={20}
-					className={`transition-transform duration-200 ${
-						isOpen ? "rotate-180" : ""
-					}`}
-				/>
-			</button>
+    const handleMenuClick = (e: React.MouseEvent) => {
+        e.stopPropagation();
+    };
 
-			{isOpen && (
-				<div
-					className="absolute top-full left-0 w-full mt-1 bg-[var(--bg-elevated-main)] border border-[var(--bg-secondary)] rounded-md shadow-lg z-50"
-					onClick={handleClose}
-				>
-					<div className="py-2">
-						{itens?.map((dropdownItem, index) => (
-							<div
-								key={index}
-								className="px-4 py-2 hover:bg-[var(--bg-elevated-hover)] transition-colors duration-200 flex items-center gap-2 cursor-pointer"
-							>
-								{dropdownItem.icon}
-								{dropdownItem.item}
-							</div>
-						))}
-					</div>
-				</div>
-			)}
-		</div>
-	);
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+                setIsOpen(false);
+            }
+        };
+
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
+
+    return (
+        <div className="relative inline-block w-full" ref={dropdownRef}>
+            <button
+                onClick={() => setIsOpen(!isOpen)}
+                className="px-4 py-2 text-white flex items-center justify-between cursor-pointer"
+            >
+                <span className="flex items-center gap-2">
+                    {triggerComponent || "Dropdown"}
+                </span>
+            </button>
+
+            {isOpen && (
+                <div
+                    className="absolute top-full left-0 w-full mt-1 bg-[var(--bg-elevated-main)] rounded-sm z-50"
+                    onClick={handleMenuClick}
+                >
+                    <div className="py-2">
+                        {itens?.map((dropdownItem, index) => (
+                            <div
+                                key={index}
+                                className="mx-1 px-4 py-2 hover:bg-[var(--bg-elevated-highlight)] rounded-sm transition-colors duration-200 flex items-center gap-2 cursor-pointer"
+                                onClick={handleClose}
+                            >
+                                {dropdownItem.icon}
+                                {dropdownItem.item}
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
+        </div>
+    );
 }

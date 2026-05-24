@@ -28,6 +28,7 @@ export default function Link({
 		<>
 			<NextLink href={hrefVar} prefetch={pref}>
 				<Text
+					cursor="pointer"
 					textString={text}
 					size={size}
 					color={color}
