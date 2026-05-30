@@ -85,7 +85,7 @@ export default function Card({
             className={"shrink-0 size-4 "+ `${pinnedVisibility}`}
             color="#1ed760"
           />
-          <div className="truncate">
+          <div className="line-clamp-1">
             <Text textString={subtitleVar} size={subtitleSize} color="#aaaaaa" />
           </div>
         </div>
