@@ -28,7 +28,7 @@ export default function Card({
   subtitleSize = "12px",
   imageSrc,
   cardType = "Playlist",
-  cardOwner = "", // artists or Playlist owner
+  cardOwner = [],
   imageBorder = "rounded",
   imageSize = 192,
   width = "64px",
@@ -42,11 +42,14 @@ export default function Card({
     vertical: `flex flex-col items-start gap-4 p-4 h-full`,
     horizontal: "flex flex-row items-center gap-4 p-2 w-full",
   };
-  const aux = cardType === "Artist" ? `` : `\u{00B7} ${cardOwner}`;
+  const separator = cardType==="Artist" ? "" : `\u{00B7}`
+  const aux = cardType === "Single" ? `Song ${separator} ${cardOwner}` : `${cardType} ${separator} ${cardOwner}`;
+
+  const cardBorder = cardType === "Artist" ? "circle" : "rounded";
   const subtitleVar =
     type === "vertical" && cardOwner
       ? cardOwner.join(", ")
-      : `${cardType} ${aux}`;
+      : `${aux}`;
   const dynamicStyles =
     type === "vertical" ? { maxWidth: `${imageSize}px` } : {};
   return (
@@ -56,7 +59,7 @@ export default function Card({
           src={imageSrc}
           alt={`Capa de ${title}`}
           size={type === "horizontal" ? 64 : imageSize}
-          shape={imageBorder}
+          shape={cardBorder}
         />
       </div>
       <div className="flex flex-col ">
