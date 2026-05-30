@@ -8,7 +8,7 @@ interface CardProps {
   imageSize?: number;
   className?: string;
   type?: "vertical" | "horizontal";
-  cardType?: "Album" | "Playlist" | "Artist" | "Single";
+  cardType?: "Album" | "Playlist" | "Artist" | "Single" | "";
   cardOwner?: string[];
   width?: number | string;
   height?: number | string;
@@ -42,7 +42,7 @@ export default function Card({
     vertical: `flex flex-col items-start gap-4 p-4 h-full`,
     horizontal: "flex flex-row items-center gap-4 p-2 w-full",
   };
-  const separator = cardType==="Artist" ? "" : `\u{00B7}`
+  const separator = (cardType==="Artist" || cardType==="") ? "" : `\u{00B7}`
   cardOwner = cardType === "Artist" ? [] : cardOwner;
   const aux = cardType === "Single" ? `Song ${separator} ${cardOwner}` : `${cardType} ${separator} ${cardOwner}`;
 
