@@ -1,6 +1,7 @@
+import Icon from "../Icon";
 import Image from "../Image/index";
 import Text from "../Text/index";
-
+import PinnedPlaceholder from "../../../public/pin.svg"
 interface CardProps {
   imageSrc: string;
   subtitle: string;
@@ -20,6 +21,7 @@ interface CardProps {
   bgColor?: string;
   hoverMask?: string;
   linkRedirect?: string;
+  isPinned?: boolean;
 }
 
 export default function Card({
@@ -38,6 +40,7 @@ export default function Card({
   height = "100%",
   orientation = "vertical", 
   className = "",
+  isPinned = false,
   children,
   ...extra
 }: CardProps) {
@@ -56,6 +59,7 @@ export default function Card({
     : `${aux}`;
   const dynamicStyles =
     orientation === "vertical" ? { maxWidth: `${imageSize}px` } : {};
+  const pinnedVisibility = isPinned === false ? "hidden" : "";
   return (
     <div className={layoutClasses[orientation] + `bg-[${bgColor}] hover:bg-[${hoverBgColor}]`} style={dynamicStyles}>
       <div className="shrink-0">
@@ -75,7 +79,12 @@ export default function Card({
             color="#eeeeee"
           />
         </div>
-        <div className="w-full line-clamp-1">
+        <div className="flex items-center gap-2 w-full line-clamp-1">
+          <Icon
+            src={PinnedPlaceholder}
+            className={"size-4 "+ `${pinnedVisibility}`}
+            color="#1ed760"
+          />
           <Text textString={subtitleVar} size={subtitleSize} color="#aaaaaa" />
         </div>
       </div>
