@@ -46,7 +46,7 @@ export default function Card({
 }: CardProps) {
   const layoutClasses = {
     vertical: `flex flex-col items-start gap-4 p-4 h-full`,
-    horizontal: `flex flex-row items-center gap-4 p-2 w-full`,
+    horizontal: `flex flex-row items-center gap-4 p-2 w-full overflow-x-hidden`,
   };
   const separator = (cardType==="Artist" || cardType==="") ? "" : `\u{00B7}`
   cardOwner = cardType === "Artist" ? [] : cardOwner;
@@ -60,8 +60,9 @@ export default function Card({
   const dynamicStyles =
     orientation === "vertical" ? { maxWidth: `${imageSize}px` } : {};
   const pinnedVisibility = isPinned === false ? "hidden" : "";
+  const lineClamp = orientation === "horizontal" ? 1 : 2;
   return (
-    <div className={layoutClasses[orientation] + `bg-[${bgColor}] hover:bg-[${hoverBgColor}] overflow-x-hidden`} style={dynamicStyles}>
+    <div className={layoutClasses[orientation] + `bg-[${bgColor}] hover:bg-[${hoverBgColor}] `} style={dynamicStyles}>
       <div className="shrink-0">
         <Image
           src={imageSrc}
@@ -85,7 +86,7 @@ export default function Card({
             className={"shrink-0 size-4 "+ `${pinnedVisibility}`}
             color="#1ed760"
           />
-          <div className="line-clamp-1">
+          <div className={`line-clamp-${lineClamp}`}>
             <Text textString={subtitleVar} size={subtitleSize} color="#aaaaaa" />
           </div>
         </div>
