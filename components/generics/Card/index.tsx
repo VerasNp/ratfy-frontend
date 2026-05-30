@@ -30,7 +30,7 @@ export default function Card({
   cardType = "Playlist",
   cardOwner = [],
   imageBorder = "rounded",
-  imageSize = 160,
+  imageSize = 64,
   width = "64px",
   height = "100%",
   type = "vertical", 
@@ -59,7 +59,7 @@ export default function Card({
         <Image
           src={imageSrc}
           alt={`Capa de ${title}`}
-          size={type === "horizontal" ? 64 : imageSize}
+          size={type === "horizontal" ? 56 : imageSize}
           shape={cardBorder}
         />
       </div>
