@@ -13,8 +13,8 @@ interface CardProps {
   width?: number | string;
   height?: number | string;
   title: string;
-  titleSize?: number | string;
-  subtitleSize?: number | string;
+  titleSize?: string;
+  subtitleSize?: string;
   children?: React.ReactNode;
   hoverBgColor?: string;
   hoverMask?: string;
@@ -23,17 +23,17 @@ interface CardProps {
 
 export default function Card({
   title,
-  titleSize = "18px",
+  titleSize = "15px",
   subtitle,
-  subtitleSize = "12px",
+  subtitleSize = "14px",
   imageSrc,
   cardType = "Playlist",
   cardOwner = [],
   imageBorder = "rounded",
-  imageSize = 192,
+  imageSize = 160,
   width = "64px",
   height = "100%",
-  type = "vertical",
+  type = "vertical", 
   className = "",
   children,
   ...extra
@@ -63,8 +63,8 @@ export default function Card({
           shape={cardBorder}
         />
       </div>
-      <div className="flex flex-col ">
-        <div className="w-full break-words overflow-hidden">
+      <div className="flex flex-col">
+        <div className="w-full line-clamp-1">
           <Text
             textString={title}
             size={titleSize}
@@ -72,7 +72,7 @@ export default function Card({
             color="#eeeeee"
           />
         </div>
-        <div className="w-full break-words line-clamp-1 overflow-hidden">
+        <div className="w-full line-clamp-1">
           <Text textString={subtitleVar} size={subtitleSize} color="#aaaaaa" />
         </div>
       </div>
