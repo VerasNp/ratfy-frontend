@@ -43,6 +43,7 @@ export default function Card({
     horizontal: "flex flex-row items-center gap-4 p-2 w-full",
   };
   const separator = cardType==="Artist" ? "" : `\u{00B7}`
+  cardOwner = cardType === "Artist" ? [] : cardOwner;
   const aux = cardType === "Single" ? `Song ${separator} ${cardOwner}` : `${cardType} ${separator} ${cardOwner}`;
 
   const cardBorder = cardType === "Artist" ? "circle" : "rounded";
@@ -53,8 +54,8 @@ export default function Card({
   const dynamicStyles =
     type === "vertical" ? { maxWidth: `${imageSize}px` } : {};
   return (
-    <div className={layoutClasses[type] + ""} style={dynamicStyles}>
-      <div>
+    <div className={layoutClasses[type] + ``} style={dynamicStyles}>
+      <div className="shrink-0">
         <Image
           src={imageSrc}
           alt={`Capa de ${title}`}
@@ -63,7 +64,7 @@ export default function Card({
         />
       </div>
       <div className="flex flex-col ">
-        <div className="w-full break-words">
+        <div className="w-full break-words overflow-hidden">
           <Text
             textString={title}
             size={titleSize}
@@ -71,7 +72,7 @@ export default function Card({
             color="#eeeeee"
           />
         </div>
-        <div className="w-full break-words line-clamp-1">
+        <div className="w-full break-words line-clamp-1 overflow-hidden">
           <Text textString={subtitleVar} size={subtitleSize} color="#aaaaaa" />
         </div>
       </div>
