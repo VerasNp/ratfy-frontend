@@ -7,7 +7,7 @@ interface CardProps {
   imageBorder?: "squared" | "rounded" | "circle";
   imageSize?: number;
   className?: string;
-  type?: "vertical" | "horizontal";
+  orientation?: "vertical" | "horizontal";
   cardType?: "Album" | "Playlist" | "Artist" | "Single" | "";
   cardOwner?: string[];
   width?: number | string;
@@ -36,7 +36,7 @@ export default function Card({
   imageSize = 64,
   width = "64px",
   height = "100%",
-  type = "vertical", 
+  orientation = "vertical", 
   className = "",
   children,
   ...extra
@@ -51,18 +51,18 @@ export default function Card({
 
   const cardBorder = cardType === "Artist" ? "circle" : "rounded";
   const subtitleVar =
-    type === "vertical" && cardOwner
-      ? cardOwner.join(", ")
-      : `${aux}`;
+  orientation === "vertical" && Array.isArray(cardOwner) && cardOwner.length > 0
+    ? cardOwner.join(", ")
+    : `${aux}`;
   const dynamicStyles =
-    type === "vertical" ? { maxWidth: `${imageSize}px` } : {};
+    orientation === "vertical" ? { maxWidth: `${imageSize}px` } : {};
   return (
-    <div className={layoutClasses[type] + `bg-[${bgColor}] hover:bg-[${hoverBgColor}]`} style={dynamicStyles}>
+    <div className={layoutClasses[orientation] + `bg-[${bgColor}] hover:bg-[${hoverBgColor}]`} style={dynamicStyles}>
       <div className="shrink-0">
         <Image
           src={imageSrc}
           alt={`Capa de ${title}`}
-          size={type === "horizontal" ? 56 : imageSize}
+          size={orientation === "horizontal" ? 56 : imageSize}
           shape={cardBorder}
         />
       </div>
