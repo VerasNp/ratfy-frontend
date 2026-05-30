@@ -55,13 +55,13 @@ export default function Card({
   const cardBorder = cardType === "Artist" ? "circle" : "rounded";
   const subtitleVar =
   orientation === "vertical" && Array.isArray(cardOwner) && cardOwner.length > 0
-    ? cardOwner.join(", ")
-    : `${aux}`;
+    ? cardOwner.join(" , ")
+    : ` ${aux}`;
   const dynamicStyles =
     orientation === "vertical" ? { maxWidth: `${imageSize}px` } : {};
   const pinnedVisibility = isPinned === false ? "hidden" : "";
   return (
-    <div className={layoutClasses[orientation] + `bg-[${bgColor}] hover:bg-[${hoverBgColor}]`} style={dynamicStyles}>
+    <div className={layoutClasses[orientation] + `bg-[${bgColor}] hover:bg-[${hoverBgColor}] overflow-x-hidden`} style={dynamicStyles}>
       <div className="shrink-0">
         <Image
           src={imageSrc}
@@ -79,13 +79,15 @@ export default function Card({
             color="#eeeeee"
           />
         </div>
-        <div className="flex items-center gap-2 w-full line-clamp-1">
+        <div className="flex items-center gap-1 w-full min-w-0">
           <Icon
             src={PinnedPlaceholder}
-            className={"size-4 "+ `${pinnedVisibility}`}
+            className={"shrink-0 size-4 "+ `${pinnedVisibility}`}
             color="#1ed760"
           />
-          <Text textString={subtitleVar} size={subtitleSize} color="#aaaaaa" />
+          <div className="truncate">
+            <Text textString={subtitleVar} size={subtitleSize} color="#aaaaaa" />
+          </div>
         </div>
       </div>
       <div>{children}</div>
