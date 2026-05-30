@@ -8,7 +8,7 @@ interface CardProps {
   imageSize?: number;
   className?: string;
   type?: "vertical" | "horizontal";
-  cardType?: "album" | "playlist" | "artist" | "single";
+  cardType?: "Album" | "Playlist" | "Artist" | "Single";
   cardOwner?: string[];
   width?: number | string;
   height?: number | string;
@@ -27,8 +27,8 @@ export default function Card({
   subtitle,
   subtitleSize = "12px",
   imageSrc,
-  cardType = "playlist",
-  cardOwner = ["Ratfy"], // artists or Playlist owner
+  cardType = "Playlist",
+  cardOwner = "", // artists or Playlist owner
   imageBorder = "rounded",
   imageSize = 192,
   width = "64px",
@@ -42,19 +42,21 @@ export default function Card({
     vertical: `flex flex-col items-start gap-4 p-4 h-full`,
     horizontal: "flex flex-row items-center gap-4 p-2 w-full",
   };
+  const aux = cardType === "Artist" ? `` : `\u{00B7} ${cardOwner}`;
   const subtitleVar =
     type === "vertical" && cardOwner
       ? cardOwner.join(", ")
-      : `${cardType} \u{00B7} ${cardOwner[0]}`;
+      : `${cardType} ${aux}`;
   const dynamicStyles =
     type === "vertical" ? { maxWidth: `${imageSize}px` } : {};
   return (
-    <div className={layoutClasses[type] + " bg-red-200"} style={dynamicStyles}>
+    <div className={layoutClasses[type] + ""} style={dynamicStyles}>
       <div>
         <Image
           src={imageSrc}
           alt={`Capa de ${title}`}
           size={type === "horizontal" ? 64 : imageSize}
+          shape={imageBorder}
         />
       </div>
       <div className="flex flex-col ">
