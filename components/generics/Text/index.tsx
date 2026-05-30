@@ -37,18 +37,18 @@ export default function Text({
   : `text-${size}`;
   return (
     <>
-      <p
+      <div
         className={`${weightClasses[weight]} ${underline ? "underline" : ""} text-[var(--generic-base-color)] hover:text-[var(--generic-hover-color)] cursor-(--generic-cursor-value)`}
         style={{
           fontSize: size.includes("px") || size.includes("rem") ? size : "12px",
           "--generic-base-color": varColor,
           "--generic-hover-color": varHoverColor,
           "--generic-cursor-value": cursor,
-          transition: transitionTime,
+          transition: `${transitionTime}`,
         }}
       >
         {textString}
-      </p>
+      </div>
     </>
   );
 }
