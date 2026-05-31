@@ -5,7 +5,7 @@ interface CardGroupProps {
     children?: React.ReactNode;
     title?: string;
     className?:string;
-    orientation: "vertical" | "horizontal"; 
+    orientation: string; 
     hiddenTitle?: boolean;
 }
 
