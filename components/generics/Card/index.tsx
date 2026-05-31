@@ -26,7 +26,7 @@ interface CardProps {
 
 export default function Card({
   title,
-  titleSize = "15px",
+  titleSize = "16px",
   subtitle,
   bgColor= "var(--bg-main)",
   hoverBgColor= "var(--bg-highlight)",
@@ -35,9 +35,9 @@ export default function Card({
   cardType = "Playlist",
   cardOwner = [],
   imageBorder = "rounded",
-  imageSize = 64,
-  width = "64px",
-  height = "100%",
+  imageSize = 160,
+  width = "",
+  height = "",
   orientation = "vertical", 
   className = "",
   isPinned = false,
@@ -45,25 +45,34 @@ export default function Card({
   ...extra
 }: CardProps) {
   const layoutClasses = {
-    vertical: `flex flex-col items-start gap-4 p-4 h-full`,
-    horizontal: `flex flex-row items-center gap-4 p-2 w-full overflow-x-hidden`,
+    vertical: `flex flex-none flex-col items-start pt-2 gap-2 `,
+    horizontal: `flex flex-row items-center px-2 py-2 gap-2 w-full h-[64px] `,
   };
   const separator = (cardType==="Artist" || cardType==="") ? "" : `\u{00B7}`
   cardOwner = cardType === "Artist" ? [] : cardOwner;
   const aux = cardType === "Single" ? `Song ${separator} ${cardOwner}` : `${cardType} ${separator} ${cardOwner}`;
-
   const cardBorder = cardType === "Artist" ? "circle" : "rounded";
   const subtitleVar =
   orientation === "vertical" && Array.isArray(cardOwner) && cardOwner.length > 0
     ? cardOwner.join(" , ")
     : ` ${aux}`;
-  const dynamicStyles =
-    orientation === "vertical" ? { maxWidth: `${imageSize}px` } : {};
   const pinnedVisibility = isPinned === false ? "hidden" : "";
-  const lineClamp = orientation === "horizontal" ? 1 : 2;
+  const verticalClasses = orientation === "vertical" 
+  ? {width: "198px",height:"256px" } 
+  : {maxHeight: "64px"}
+  const clampChars = (text: string, max: number) =>
+  text.length > max ? text.slice(0, max) + "…" : text;
   return (
-    <div className={layoutClasses[orientation] + `bg-[${bgColor}] hover:bg-[${hoverBgColor}] `} style={dynamicStyles}>
-      <div className="shrink-0">
+    <div 
+      className={
+        layoutClasses[orientation] + 
+        ` bg-[${bgColor}] hover:bg-[${hoverBgColor}] cursor-pointer 
+        `}
+      style={
+          verticalClasses
+      }
+      >
+      <div className="flex shrink-0 self-center">
         <Image
           src={imageSrc}
           alt={`Capa de ${title}`}
@@ -71,23 +80,24 @@ export default function Card({
           shape={cardBorder}
         />
       </div>
-      <div className="flex flex-col">
-        <div className="w-full line-clamp-1">
+      <div className={`"w-full min-w-0 overflow-hidden ${orientation==="vertical" ? "px-4" : "p-1"}`}>
+        <div className={orientation === "horizontal" ? "line-clamp-1" : "line-clamp-2"}>
           <Text
-            textString={title}
+            textString={clampChars(title, 32)}
             size={titleSize}
             weight="bold"
             color="#eeeeee"
+            cursor="pointer"
           />
         </div>
-        <div className="flex items-center gap-1 w-full min-w-0">
+        <div className=" flex gap-1 w-full min-w-0 overflow-hidden">
           <Icon
             src={PinnedPlaceholder}
             className={"shrink-0 size-4 "+ `${pinnedVisibility}`}
             color="#1ed760"
           />
-          <div className={`line-clamp-${lineClamp}`}>
-            <Text textString={subtitleVar} size={subtitleSize} color="#aaaaaa" />
+          <div className={` w-full ${orientation === "horizontal" ? "line-clamp-1" : "line-clamp-2"}`}>
+            <Text textString={clampChars(subtitleVar, 56)} cursor="pointer" size={subtitleSize} color="#aaaaaa" />
           </div>
         </div>
       </div>
