@@ -58,20 +58,29 @@ export default function Player({
   const [volume, setVolume] = useState(0.7);
   const [isMuted, setIsMuted] = useState(false);
 
+  // Refs to hold latest callbacks (prevents unnecessary re-registration)
+  const onPlayPauseRef = useRef(onPlayPause);
+  const onNextRef = useRef(onNext);
+  const onPreviousRef = useRef(onPrevious);
+  const onSeekRef = useRef(onSeek);
+
+  useEffect(() => {
+    onPlayPauseRef.current = onPlayPause;
+    onNextRef.current = onNext;
+    onPreviousRef.current = onPrevious;
+    onSeekRef.current = onSeek;
+  }, [onPlayPause, onNext, onPrevious, onSeek]);
+
   // Load new track when currentTrack changes
   useEffect(() => {
     if (audioRef.current && currentTrack) {
-      // Pause current playback and abort any in-flight fetch
       audioRef.current.pause();
-      // Set new source and load
       audioRef.current.src = currentTrack.audioUrl;
       audioRef.current.load();
 
-      // Reset progress state for the new track
       setCurrentTime(0);
       setDuration(0);
 
-      // If the player was playing, resume playback (catch AbortError and ignore it)
       if (isPlaying) {
         audioRef.current.play().catch((err) => {
           if (err.name !== 'AbortError') {
@@ -116,7 +125,7 @@ export default function Player({
     if (audioRef.current) {
       audioRef.current.currentTime = newTime;
       setCurrentTime(newTime);
-      onSeek?.(newTime);
+      onSeekRef.current?.(newTime);
     }
   };
 
@@ -139,64 +148,68 @@ export default function Player({
   };
 
   const handleTrackEnd = () => {
-    onNext();
+    onNextRef.current();
   };
 
-  // Media Session integration
+  // Media Session API integration (stable, no unnecessary re-runs)
   useEffect(() => {
     if (!currentTrack) return;
+    if (!('mediaSession' in navigator)) return;
 
-    if ('mediaSession' in navigator) {
-      // metadata
-      navigator.mediaSession.metadata = new MediaMetadata({
-        title: currentTrack.title,
-        artist: currentTrack.artist,
-        album: currentTrack.album || '',
-        artwork: [{ src: currentTrack.albumArtUrl, sizes: '512x512' }],
+    // Set metadata
+    navigator.mediaSession.metadata = new MediaMetadata({
+      title: currentTrack.title,
+      artist: currentTrack.artist,
+      album: currentTrack.album || '',
+      artwork: [{ src: currentTrack.albumArtUrl, sizes: '512x512' }],
+    });
+
+    // Reset position state (prevents showing old duration)
+    navigator.mediaSession.setPositionState({
+      duration: 0,
+      position: 0,
+      playbackRate: 1,
+    });
+
+    // Register action handlers that call the latest callbacks via refs
+    const playHandler = () => onPlayPauseRef.current();
+    const pauseHandler = () => onPlayPauseRef.current();
+    const nextHandler = () => onNextRef.current();
+    const prevHandler = () => onPreviousRef.current();
+
+    navigator.mediaSession.setActionHandler('play', playHandler);
+    navigator.mediaSession.setActionHandler('pause', pauseHandler);
+    navigator.mediaSession.setActionHandler('previoustrack', prevHandler);
+    navigator.mediaSession.setActionHandler('nexttrack', nextHandler);
+
+    if (onSeekRef.current) {
+      navigator.mediaSession.setActionHandler('seekto', (details) => {
+        if (details.seekTime !== undefined) onSeekRef.current?.(details.seekTime);
       });
+    }
 
-      // position state
-      navigator.mediaSession.setPositionState({
-        duration: currentTrack.duration || duration || 0,
-        position: 0,
-        playbackRate: 1,
-      });
-
-      const playHandler = () => onPlayPause();
-      const pauseHandler = () => onPlayPause();
-      const nextHandler = () => onNext();
-      const prevHandler = () => onPrevious();
-
-      navigator.mediaSession.setActionHandler('play', playHandler);
-      navigator.mediaSession.setActionHandler('pause', pauseHandler);
-      navigator.mediaSession.setActionHandler('previoustrack', prevHandler);
-      navigator.mediaSession.setActionHandler('nexttrack', nextHandler);
-
-      if (onSeek) {
-        navigator.mediaSession.setActionHandler('seekto', (details) => {
-          if (details.seekTime !== undefined) onSeek(details.seekTime);
-        });
-      }
-
-      return () => {
-        // cleanup stuff
+    // Cleanup handlers on track change or unmount
+    return () => {
+      if ('mediaSession' in navigator) {
         navigator.mediaSession.setActionHandler('play', null);
         navigator.mediaSession.setActionHandler('pause', null);
         navigator.mediaSession.setActionHandler('previoustrack', null);
         navigator.mediaSession.setActionHandler('nexttrack', null);
-        if (onSeek) navigator.mediaSession.setActionHandler('seekto', null);
-      };
-    }
-  }, [currentTrack, onPlayPause, onNext, onPrevious, onSeek, duration]);
+        navigator.mediaSession.setActionHandler('seekto', null);
+      }
+    };
+  }, [currentTrack]); // Only depends on currentTrack, not on the callback functions
 
+  // Update playback state (playing/paused)
   useEffect(() => {
     if ('mediaSession' in navigator) {
       navigator.mediaSession.playbackState = isPlaying ? 'playing' : 'paused';
     }
   }, [isPlaying]);
 
+  // Update position state when duration or currentTime changes
   useEffect(() => {
-    if ('mediaSession' in navigator && duration && currentTime !== undefined) {
+    if ('mediaSession' in navigator && duration > 0) {
       navigator.mediaSession.setPositionState({
         duration: duration,
         position: currentTime,
@@ -204,7 +217,6 @@ export default function Player({
       });
     }
   }, [currentTime, duration]);
-
 
   if (!currentTrack) {
     return null;
@@ -284,7 +296,7 @@ export default function Player({
             </Button>
           </div>
 
-          {/* Progress bar (time seek) */}
+          {/* Progress bar */}
           <div className="flex w-full max-w-xl items-center gap-2">
             <span className="shrink-0 text-xs tabular-nums text-zinc-400">
               {formatTime(currentTime)}
@@ -315,7 +327,6 @@ export default function Player({
             <Icon src={isMuted ? VolumeX : Volume2} size={18} />
           </Button>
 
-          {/* Volume control using the same ProgressBar */}
           <div className="w-24">
             <ProgressBar
               value={volume}
