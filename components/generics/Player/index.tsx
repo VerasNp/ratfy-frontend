@@ -12,7 +12,7 @@ import {
 import Button from "../Button";
 import Icon from "../Icon";
 import Image from "../Image";
-import Text from "../Text";
+import ProgressBar from "../ProgressBar";
 
 export interface Track {
   id: string;
@@ -57,8 +57,6 @@ export default function Player({
   const [duration, setDuration] = useState(0);
   const [volume, setVolume] = useState(0.7);
   const [isMuted, setIsMuted] = useState(false);
-  const [hoverTime, setHoverTime] = useState<number | null>(null);
-  const [hoverLeft, setHoverLeft] = useState<number>(0);
 
   // Load new track when currentTrack changes
   useEffect(() => {
@@ -101,8 +99,7 @@ export default function Player({
     }
   };
 
-  const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newTime = parseFloat(e.target.value);
+  const handleSeek = (newTime: number) => {
     if (audioRef.current) {
       audioRef.current.currentTime = newTime;
       setCurrentTime(newTime);
@@ -110,23 +107,7 @@ export default function Player({
     }
   };
 
-  const handleProgressHover = (e: React.MouseEvent<HTMLInputElement>) => {
-    if (!duration) return;
-
-    const rect = e.currentTarget.getBoundingClientRect();
-    const ratio = Math.min(1, Math.max(0, (e.clientX - rect.left) / rect.width));
-    const time = ratio * duration;
-
-    setHoverTime(time);
-    setHoverLeft(ratio * 100);
-  };
-
-  const clearProgressHover = () => {
-    setHoverTime(null);
-  };
-
-  const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newVolume = parseFloat(e.target.value);
+  const handleVolumeChange = (newVolume: number) => {
     setVolume(newVolume);
     setIsMuted(newVolume === 0);
     if (audioRef.current) {
@@ -138,15 +119,9 @@ export default function Player({
   const toggleMute = () => {
     if (isMuted) {
       const newVolume = volume === 0 ? 0.7 : volume;
-      setVolume(newVolume);
-      if (audioRef.current) audioRef.current.volume = newVolume;
-      setIsMuted(false);
-      onVolumeChange?.(newVolume);
+      handleVolumeChange(newVolume);
     } else {
-      setVolume(0);
-      if (audioRef.current) audioRef.current.volume = 0;
-      setIsMuted(true);
-      onVolumeChange?.(0);
+      handleVolumeChange(0);
     }
   };
 
@@ -173,9 +148,9 @@ export default function Player({
         onEnded={handleTrackEnd}
       />
 
-      <div className="flex items-center gap-4 h-16">
+      <div className="grid h-16 grid-cols-[minmax(0,1fr)_minmax(0,56rem)_minmax(0,1fr)] items-center gap-4">
         {/* Left section */}
-        <div className="flex items-center gap-3 min-w-0 w-80 shrink-0 overflow-hidden">
+        <div className="flex min-w-0 items-center gap-3 justify-self-start overflow-hidden">
           <Image
             src={currentTrack.albumArtUrl}
             alt={currentTrack.title}
@@ -185,17 +160,23 @@ export default function Player({
           />
 
           <div className="min-w-0 overflow-hidden">
-            <p className="truncate text-sm font-medium text-white leading-5" title={currentTrack.title}>
+            <p
+              className="truncate text-sm font-medium leading-5 text-white"
+              title={currentTrack.title}
+            >
               {currentTrack.title}
             </p>
-            <p className="truncate text-xs text-zinc-400 leading-4" title={artistDisplay}>
+            <p
+              className="truncate text-xs leading-4 text-zinc-400"
+              title={artistDisplay}
+            >
               {artistDisplay}
             </p>
           </div>
         </div>
 
         {/* Center section */}
-        <div className="flex flex-1 flex-col items-center justify-center gap-1 min-w-0">
+        <div className="flex min-w-0 w-full flex-col items-center justify-center gap-1 justify-self-center">
           <div className="flex items-center gap-4">
             <Button
               variant="ghost"
@@ -211,7 +192,7 @@ export default function Player({
               size="icon"
               onClick={onPlayPause}
               aria-label={isPlaying ? "Pause" : "Play"}
-              className="h-10 w-10 rounded-full bg-white text-black hover:scale-105 transition-transform"
+              className="h-10 w-10 rounded-full bg-white text-black transition-transform hover:scale-105"
             >
               <Icon src={isPlaying ? Pause : Play} size={20} />
             </Button>
@@ -225,43 +206,29 @@ export default function Player({
               <Icon src={SkipForward} size={20} />
             </Button>
           </div>
-          <div className="flex items-center gap-2 w-full max-w-xl">
-            <span className="text-xs text-zinc-400 tabular-nums shrink-0">
+
+          {/* Progress bar (time seek) */}
+          <div className="flex w-full max-w-xl items-center gap-2">
+            <span className="shrink-0 text-xs tabular-nums text-zinc-400">
               {formatTime(currentTime)}
             </span>
 
-            <div className="relative flex-1">
-              {hoverTime !== null && (
-                <div
-                  className="pointer-events-none absolute -top-8 z-10 -translate-x-1/2 rounded bg-zinc-900 px-2 py-1 text-xs text-white shadow-lg border border-white/10"
-                  style={{ left: `${hoverLeft}%` }}
-                >
-                  {formatTime(hoverTime)}
-                </div>
-              )}
+            <ProgressBar
+              value={currentTime}
+              max={duration || 0}
+              onChange={handleSeek}
+              formatValue={formatTime}
+              showTooltip
+            />
 
-              <input
-                type="range"
-                min={0}
-                max={duration || 0}
-                value={currentTime}
-                onChange={handleSeek}
-                onMouseMove={handleProgressHover}
-                onMouseEnter={handleProgressHover}
-                onMouseLeave={clearProgressHover}
-                className="w-full h-1 rounded-full bg-zinc-600 accent-white cursor-pointer"
-                step={0.1}
-              />
-            </div>
-
-            <span className="text-xs text-zinc-400 tabular-nums shrink-0">
+            <span className="shrink-0 text-xs tabular-nums text-zinc-400">
               {formatTime(duration)}
             </span>
           </div>
         </div>
 
         {/* Right section */}
-        <div className="flex items-center gap-2 w-44 justify-end shrink-0">
+        <div className="flex items-center justify-end gap-2 justify-self-end">
           <Button
             variant="ghost"
             size="icon"
@@ -271,15 +238,16 @@ export default function Player({
             <Icon src={isMuted ? VolumeX : Volume2} size={18} />
           </Button>
 
-          <input
-            type="range"
-            min={0}
-            max={1}
-            step={0.01}
-            value={volume}
-            onChange={handleVolumeChange}
-            className="w-24 h-1 rounded-full bg-zinc-600 accent-white cursor-pointer"
-          />
+          {/* Volume control using the same ProgressBar */}
+          <div className="w-24">
+            <ProgressBar
+              value={volume}
+              max={1}
+              onChange={handleVolumeChange}
+              formatValue={(v) => `${Math.round(v * 100)}%`}
+              showTooltip
+            />
+          </div>
         </div>
       </div>
     </div>
