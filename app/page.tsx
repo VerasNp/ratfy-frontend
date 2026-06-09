@@ -1,65 +1,131 @@
-import Image from "next/image";
+"use client";
+
+import { useState } from "react";
+import Player, { Track } from "@/components/generics/Player";
+
+const playlist: Track[] = [
+  {
+    id: "1",
+    title: "Rhymes Like Dimes",
+    artist: "MF DOOM",
+    album: "Operation: Doomsday",
+    albumArtUrl: "https://dn710007.ca.archive.org/0/items/operation-doomsday-disc1-flac/cover.jpg",
+    audioUrl: "https://archive.org/download/operation-doomsday-disc1-flac/03%20-%20Rhymes%20Like%20Dimes.mp3",
+    duration: 298,
+  },
+  {
+    id: "2",
+    title: "Football, Nightmare And A Bolt From The Blue",
+    artist: "A Last Failure",
+    album: "Ok, We Move For A Desperate Goal",
+    albumArtUrl: "https://dn721808.ca.archive.org/0/items/ALF-OWMFADG-2009/2009%20-%20Ok%2C%20We%20Move%20For%20A%20Desperate%20Goal/folder.jpg",
+    audioUrl: "https://archive.org/download/ALF-OWMFADG-2009/2009%20-%20Ok%2C%20We%20Move%20For%20A%20Desperate%20Goal/03%20Football%2C%20Nightmare%20And%20A%20Bolt%20Fr.m4a",
+    duration: 217,
+  },
+  {
+    id: "3",
+    title: "La Vie En Rose",
+    artist: "Edith Piaf",
+    albumArtUrl: "https://dn721601.ca.archive.org/0/items/78_la-vie-en-rose_edith-piaf-m-david-louiguy-robert-chauvigny_gbia3025698a/78_la-vie-en-rose_edith-piaf-m-david-louiguy-robert-chauvigny_gbia3025698a_itemimage.jpg",
+    audioUrl: "https://archive.org/download/78_la-vie-en-rose_edith-piaf-m-david-louiguy-robert-chauvigny_gbia3025698a/LA%20VIE%20EN%20ROSE%20-%20EDITH%20PIAF%20-%20M.%20David%20-%20Louiguy.mp3",
+    duration: 212,
+  },
+];
 
 export default function Home() {
+  const [currentTrack, setCurrentTrack] = useState<Track | null>(playlist[0]);
+  const [isPlaying, setIsPlaying] = useState(false);
+
+  const handlePlayPause = () => {
+    setIsPlaying(!isPlaying);
+  };
+
+  const handleNext = () => {
+    if (!currentTrack) return;
+    const currentIndex = playlist.findIndex((t) => t.id === currentTrack.id);
+    const nextIndex = (currentIndex + 1) % playlist.length;
+    setCurrentTrack(playlist[nextIndex]);
+    setIsPlaying(true);
+  };
+
+  const handlePrevious = () => {
+    if (!currentTrack) return;
+    const currentIndex = playlist.findIndex((t) => t.id === currentTrack.id);
+    const prevIndex = (currentIndex - 1 + playlist.length) % playlist.length;
+    setCurrentTrack(playlist[prevIndex]);
+    setIsPlaying(true);
+  };
+
+  const handleSeek = (time: number) => {
+    console.log("Seek to:", time);
+  };
+
+  const handleVolumeChange = (volume: number) => {
+    console.log("Volume changed to:", volume);
+  };
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <main className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white pb-32">
+      <div className="container mx-auto p-8">
+        <h1 className="text-4xl font-bold mb-8">Now Playing</h1>
+
+        <div key={currentTrack?.id || "none"} className="flex items-center gap-6 mb-12">
+          {currentTrack ? (
+            <>
+              <img
+                src={currentTrack.albumArtUrl}
+                alt={currentTrack.title}
+                className="w-48 h-48 rounded-lg shadow-2xl object-cover"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src = "/placeholder-album.png";
+                }}
+              />
+              <div>
+                <h2 className="text-3xl font-bold">{currentTrack.title}</h2>
+                <p className="text-xl text-gray-400">
+                  {currentTrack.album
+                    ? `${currentTrack.artist} • Album: '${currentTrack.album}''`
+                    : currentTrack.artist}
+                </p>
+              </div>
+            </>
+          ) : (
+            <div className="text-gray-400 italic">Select a track to start</div>
+          )}
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+
+        {/* Playlist */}
+        <div className="space-y-2">
+          <h3 className="text-2xl font-semibold mb-4">Playlist</h3>
+          {playlist.map((track) => (
+            <button
+              key={track.id}
+              onClick={() => {
+                setCurrentTrack(track);
+                setIsPlaying(true);
+              }}
+              className={`w-full text-left p-4 rounded-lg transition ${
+                currentTrack?.id === track.id
+                  ? "bg-green-900 text-white"
+                  : "hover:bg-white/10"
+              }`}
+            >
+              <div className="font-medium">{track.title}</div>
+              <div className="text-sm text-gray-400">{track.artist}</div>
+            </button>
+          ))}
         </div>
-      </main>
-    </div>
+      </div>
+
+      <Player
+        currentTrack={currentTrack}
+        isPlaying={isPlaying}
+        onPlayPause={handlePlayPause}
+        onNext={handleNext}
+        onPrevious={handlePrevious}
+        onSeek={handleSeek}
+        onVolumeChange={handleVolumeChange}
+      />
+    </main>
   );
 }
