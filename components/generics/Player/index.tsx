@@ -142,6 +142,70 @@ export default function Player({
     onNext();
   };
 
+  // Media Session integration
+  useEffect(() => {
+    if (!currentTrack) return;
+
+    if ('mediaSession' in navigator) {
+      // metadata
+      navigator.mediaSession.metadata = new MediaMetadata({
+        title: currentTrack.title,
+        artist: currentTrack.artist,
+        album: currentTrack.album || '',
+        artwork: [{ src: currentTrack.albumArtUrl, sizes: '512x512' }],
+      });
+
+      // position state
+      navigator.mediaSession.setPositionState({
+        duration: currentTrack.duration || duration || 0,
+        position: 0,
+        playbackRate: 1,
+      });
+
+      const playHandler = () => onPlayPause();
+      const pauseHandler = () => onPlayPause();
+      const nextHandler = () => onNext();
+      const prevHandler = () => onPrevious();
+
+      navigator.mediaSession.setActionHandler('play', playHandler);
+      navigator.mediaSession.setActionHandler('pause', pauseHandler);
+      navigator.mediaSession.setActionHandler('previoustrack', prevHandler);
+      navigator.mediaSession.setActionHandler('nexttrack', nextHandler);
+
+      if (onSeek) {
+        navigator.mediaSession.setActionHandler('seekto', (details) => {
+          if (details.seekTime !== undefined) onSeek(details.seekTime);
+        });
+      }
+
+      return () => {
+        // cleanup stuff
+        navigator.mediaSession.setActionHandler('play', null);
+        navigator.mediaSession.setActionHandler('pause', null);
+        navigator.mediaSession.setActionHandler('previoustrack', null);
+        navigator.mediaSession.setActionHandler('nexttrack', null);
+        if (onSeek) navigator.mediaSession.setActionHandler('seekto', null);
+      };
+    }
+  }, [currentTrack, onPlayPause, onNext, onPrevious, onSeek, duration]);
+
+  useEffect(() => {
+    if ('mediaSession' in navigator) {
+      navigator.mediaSession.playbackState = isPlaying ? 'playing' : 'paused';
+    }
+  }, [isPlaying]);
+
+  useEffect(() => {
+    if ('mediaSession' in navigator && duration && currentTime !== undefined) {
+      navigator.mediaSession.setPositionState({
+        duration: duration,
+        position: currentTime,
+        playbackRate: 1,
+      });
+    }
+  }, [currentTime, duration]);
+
+
   if (!currentTrack) {
     return null;
   }
