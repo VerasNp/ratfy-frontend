@@ -61,10 +61,23 @@ export default function Player({
   // Load new track when currentTrack changes
   useEffect(() => {
     if (audioRef.current && currentTrack) {
+      // Pause current playback and abort any in-flight fetch
+      audioRef.current.pause();
+      // Set new source and load
       audioRef.current.src = currentTrack.audioUrl;
       audioRef.current.load();
+
+      // Reset progress state for the new track
+      setCurrentTime(0);
+      setDuration(0);
+
+      // If the player was playing, resume playback (catch AbortError and ignore it)
       if (isPlaying) {
-        audioRef.current.play().catch((err) => console.error("Play error:", err));
+        audioRef.current.play().catch((err) => {
+          if (err.name !== 'AbortError') {
+            console.error("Play error:", err);
+          }
+        });
       }
     }
   }, [currentTrack]);
