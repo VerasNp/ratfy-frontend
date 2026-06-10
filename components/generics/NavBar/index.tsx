@@ -29,24 +29,6 @@ export default function NavBar() {
 
       <div className="flex items-center gap-6 text-text-secondary">
 
-        <Button variant="primary" size="sm" className="whitespace-nowrap hover:scale-105 transition-transform duration-200">
-          <Text textString="Explore Premium" size="sm" weigth="bold" />
-        </Button>
-
-        <div className="flex items-center gap-1.5 cursor-pointer hover:text-white transition-colors duration-200 font-semibold text-sm">
-          <Icon src={ArrowDownCircle} size={20} />
-          <Text textString="Install App" size="sm" weigth="bold" color="--text-secondary" hoverColor="--text-primary"/>
-        </div>
-
-        <div className="flex items-center gap-4">
-          <button className="hover:text-white transition-colors duration-200 cursor-pointer" aria-label="Notifications">
-            <Icon src={Bell} size={18} />
-          </button>
-          <button className="hover:text-white transition-colors duration-200 cursor-pointer" aria-label="Friend Activity">
-            <Icon src={Users} size={18} />
-          </button>
-        </div>
-
         <div className="flex items-center justify-center p-1 rounded-full bg-black cursor-pointer hover:scale-105 transition-transform duration-200">
         <Image src="/avatar.png" alt="Foto de perfil do usuário" size={32} className="rounded-full"/>
         </div>
