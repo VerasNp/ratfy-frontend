@@ -270,6 +270,7 @@ export default function Player({
             <Button
               variant="ghost"
               size="icon"
+              className="cursor-pointer"
               onClick={onPrevious}
               aria-label="Previous track"
             >
@@ -281,7 +282,7 @@ export default function Player({
               size="icon"
               onClick={onPlayPause}
               aria-label={isPlaying ? "Pause" : "Play"}
-              className="h-10 w-10 rounded-full bg-white text-black transition-transform hover:scale-105"
+              className="h-10 w-10 rounded-full bg-white text-black transition-transform hover:scale-105 cursor-pointer"
             >
               <Icon src={isPlaying ? Pause : Play} size={20} />
             </Button>
@@ -289,6 +290,7 @@ export default function Player({
             <Button
               variant="ghost"
               size="icon"
+              className="cursor-pointer"
               onClick={onNext}
               aria-label="Next track"
             >
@@ -321,6 +323,7 @@ export default function Player({
           <Button
             variant="ghost"
             size="icon"
+            className="cursor-pointer"
             onClick={toggleMute}
             aria-label={isMuted ? "Unmute" : "Mute"}
           >
