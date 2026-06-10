@@ -84,7 +84,7 @@ export default function Home() {
                 <h2 className="text-3xl font-bold">{currentTrack.title}</h2>
                 <p className="text-xl text-gray-400">
                   {currentTrack.album
-                    ? `${currentTrack.artist} • Album: '${currentTrack.album}''`
+                    ? `${currentTrack.artist} • Album: "${currentTrack.album}"`
                     : currentTrack.artist}
                 </p>
               </div>
