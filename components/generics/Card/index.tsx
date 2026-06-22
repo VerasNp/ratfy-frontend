@@ -2,15 +2,16 @@ import Icon from "../Icon";
 import Image from "../Image/index";
 import Text from "../Text/index";
 import PinnedPlaceholder from "../../../public/pin.svg"
+import { StaticImageData } from "next/image";
 interface CardProps {
-  imageSrc: string;
+  imageSrc: string | StaticImageData;
   subtitle: string;
   imageBorder?: "squared" | "rounded" | "circle";
   imageSize?: number;
   className?: string;
   orientation?: "vertical" | "horizontal";
   cardType?: "Album" | "Playlist" | "Artist" | "Single" | "";
-  cardOwner?: string[];
+  cardOwner?: string[] | string;
   width?: number | string;
   height?: number | string;
   title: string;
@@ -38,7 +39,7 @@ export default function Card({
   imageSize = 160,
   width = "",
   height = "",
-  orientation = "vertical", 
+  orientation = "vertical",
   className = "",
   isPinned = false,
   children,
@@ -57,16 +58,16 @@ export default function Card({
     ? cardOwner.join(" , ")
     : ` ${aux}`;
   const pinnedVisibility = isPinned === false ? "hidden" : "";
-  const verticalClasses = orientation === "vertical" 
-  ? {width: "198px",height:"256px" } 
+  const verticalClasses = orientation === "vertical"
+  ? {width: "198px",height:"256px" }
   : {maxHeight: "64px"}
   const clampChars = (text: string, max: number) =>
   text.length > max ? text.slice(0, max) + "…" : text;
   return (
-    <div 
+    <div
       className={
-        layoutClasses[orientation] + 
-        ` bg-[${bgColor}] hover:bg-[${hoverBgColor}] cursor-pointer 
+        layoutClasses[orientation] +
+        ` bg-[${bgColor}] hover:bg-[${hoverBgColor}] cursor-pointer
         `}
       style={
           verticalClasses
