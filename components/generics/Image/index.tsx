@@ -5,20 +5,21 @@ interface ImageProps {
   src: string;
   alt: string;
   size?: number;
-  shape?: "square" | "rounded";
+  shape?: "square" | "rounded" | "circle";
   className?: string;
 }
 export default function Image({
   src,
   alt,
   size = 64, // Tamanho padrão se não for informado
-  shape = "square",
+  shape = "rounded",
   className = "",
 }: ImageProps) {
   // Dicionário de formatos usando classes do Tailwind
   const shapeClasses = {
     square: "rounded-none",
     rounded: "rounded-md",
+    circle: "rounded-full",
   };
 
   return (

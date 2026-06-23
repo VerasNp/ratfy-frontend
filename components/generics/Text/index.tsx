@@ -32,10 +32,12 @@ export default function Text({
   const varHoverColor = hoverColor.startsWith("#")
     ? hoverColor
     : `var(${hoverColor})`;
-
+  const sizeClass = size.includes("px") || size.includes("rem")
+  ? `text-[${size}]`
+  : `text-${size}`;
   return (
     <>
-      <p
+      <div
         className={`
           text-${size}
           ${weightClasses[weight]}
@@ -45,14 +47,15 @@ export default function Text({
           cursor-(--generic-cursor-value)
           `}
         style={{
+          fontSize: size.includes("px") || size.includes("rem") ? size : "12px",
           "--generic-base-color": varColor,
           "--generic-hover-color": varHoverColor,
           "--generic-cursor-value": cursor,
-          transition: transitionTime,
+          transition: `${transitionTime}`,
         }}
       >
         {textString}
-      </p>
+      </div>
     </>
   );
 }

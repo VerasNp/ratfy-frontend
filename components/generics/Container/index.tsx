@@ -1,9 +1,17 @@
 import React from "react";
 
-export default function Container({ children }: { children: React.ReactNode }) {
+interface ContainerProps {
+  children: React.ReactNode;
+  className?: string;
+}
+
+export default function Container({
+  children = {},
+  className = "",
+}: ContainerProps) {
   return (
     <>
-      <div className={`flex gap-2 items-center justify-center`}>{children}</div>
+      <div className={className}>{children}</div>
     </>
   );
 }
