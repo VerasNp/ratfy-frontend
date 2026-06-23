@@ -3,7 +3,7 @@ interface TextProps {
   textString: string;
   size?: string;
   color?: string;
-  weigth?: "thin" | "normal" | "medium" | "bold" | "extrabold" | "black";
+  weight?: "thin" | "normal" | "medium" | "bold" | "extrabold" | "black";
   underline?: false | true;
   hoverColor?: string;
   transitionTime?: number;
@@ -14,13 +14,13 @@ export default function Text({
   textString,
   size = "base",
   color = "--text-primary",
-  weigth = "normal",
+  weight = "normal",
   underline = false,
   hoverColor = color,
   transitionTime = 0.2,
   cursor = "default",
 }: TextProps) {
-  const weigthClasses = {
+  const weightClasses = {
     thin: "font-thin",
     normal: "font-normal",
     medium: "font-medium",
@@ -38,7 +38,7 @@ export default function Text({
       <p
         className={`
           text-${size}
-          ${weigthClasses[weigth]}
+          ${weightClasses[weight]}
           ${underline ? "underline" : ""}
           text-[var(--generic-base-color)]
           hover:text-[var(--generic-hover-color)]
