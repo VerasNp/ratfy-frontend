@@ -8,7 +8,7 @@ import Button from "@/components/generics/Button";
 import Link from "@/components/generics/Link";
 import Icon from "@/components/generics/Icon";
 
-export default function EsqueciSenhaPage() {
+export default function ForgotPasswordPage() {
 	const [step, setStep] = useState(1);
 
 	return (
