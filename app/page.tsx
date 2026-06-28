@@ -1,7 +1,5 @@
 "use client";
 
-import { useState } from "react";
-import Player, { Track } from "@/components/generics/Player";
 import PlayerTest from "./test/PlayerTest";
 import CardTest from "./test/CardTest";
 

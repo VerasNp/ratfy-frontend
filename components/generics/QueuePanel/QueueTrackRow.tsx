@@ -11,7 +11,6 @@ interface QueueTrackRowProps {
   isPlaying?:   boolean
   onClick?:     () => void
   onRemove?:    () => void
-  // drag-and-drop props passed down from the parent
   dragHandleProps?: React.HTMLAttributes<HTMLDivElement>
   isDragging?:  boolean
 }
