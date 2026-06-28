@@ -8,8 +8,7 @@ import {
   SkipForward,
   Volume2,
   VolumeX,
-  List,
-  ListMusic,
+  List as ListMusicIcon,
 } from "lucide-react";
 import Button from "../Button";
 import Icon from "../Icon";
@@ -332,11 +331,11 @@ export default function Player({
           <Button
             variant="ghost"
             size="icon"
-            className="cursor-pointer"
+            className={`cursor-pointer `}
             onClick={() => setIsQueueOpen((q) => !q)}
             aria-label="Queue"
           >
-            <Icon src={isQueueOpen ? ListMusic : List }  />
+            <ListMusicIcon color={`${isQueueOpen ? 'var(--bg-brand)' : 'var(--text-primary)'}`} />
           </Button>
           <Button
             variant="ghost"
