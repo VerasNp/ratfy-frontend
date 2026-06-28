@@ -38,7 +38,8 @@ interface PlayerProps {
   queue?:          Track[] | null;
   onTrackSelect?:  (track: Track) => void;
   onQueueReorder?: (newQueue: Track[]) => void;
-  onQueueRemove?:  (trackId: string) => void;
+  onQueueRemove?:   (trackId: string) => void;
+  onQueueClear?:    () => void;
 }
 
 function formatTime(seconds: number): string {
@@ -60,6 +61,7 @@ export default function Player({
   onTrackSelect,
   onQueueReorder,
   onQueueRemove,
+  onQueueClear,
   className = "",
 }: PlayerProps) {
   const audioRef = useRef<HTMLAudioElement>(null);
@@ -297,6 +299,7 @@ export default function Player({
           }}
           onQueueReorder={(newQueue) => onQueueReorder?.(newQueue)}
           onQueueRemove={(id) => onQueueRemove?.(id)}
+          onQueueClear={onQueueClear}
         />
       )}
     </div>

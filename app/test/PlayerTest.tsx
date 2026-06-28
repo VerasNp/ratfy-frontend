@@ -9,14 +9,10 @@ export default function PlayerTest() {
   const [queue, setQueue] = useState<Track[]>(playlist)
   const [currentTrack, setCurrentTrack] = useState<Track | null>(queue[0])
   const [isPlaying,    setIsPlaying]    = useState(false)
-
-  // ── Playback handlers ────────────────────────────────────────────────────
-
   const handlePlayPause = () => setIsPlaying((p) => !p)
 
   const handleNext = () => {
     if (queue.length === 0 || !currentTrack) {
-      // No more tracks — stop playback
       setIsPlaying(false)
       return
     }
@@ -33,18 +29,15 @@ export default function PlayerTest() {
   const handlePrevious = () => {
     if (!currentTrack) return
     const currentIndex = queue.findIndex((t) => t.id === currentTrack.id)
-    if (currentIndex <= 0) return   // already at the start, do nothing
+    if (currentIndex <= 0) return
     const prev = queue[currentIndex - 1]
     const prevMusic = playlist[getIdTrackFromDB(prev.id)]
-    // Put the current track back at the front of the queue
+    console.log(prevMusic.id)
     setCurrentTrack(prev)
     setIsPlaying(true)
   }
 
-  // ── Queue handlers ───────────────────────────────────────────────────────
-
   const handleTrackSelect = (track: Track) => {
-    // Remove everything up to and including the selected track from the queue
     setCurrentTrack(track)
     setIsPlaying(true)
   }
@@ -57,19 +50,18 @@ export default function PlayerTest() {
     setQueue((q) => q.filter((t) => t.id !== trackId))
   }
 
-  // ── Playlist row click — replaces queue with remaining tracks ────────────
-
   const handlePlaylistClick = (track: Track) => {
     setCurrentTrack(track)
     setIsPlaying(true)
   }
-
+  const clearQueue = () => {
+    setQueue([])
+  }
   return (
     <main className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white pb-32">
       <div className="container mx-auto p-8">
         <h1 className="text-4xl font-bold mb-8">Now Playing</h1>
 
-        {/* Current track hero */}
         <div key={currentTrack?.id ?? 'none'} className="flex items-center gap-6 mb-12">
           {currentTrack ? (
             <>
@@ -93,7 +85,6 @@ export default function PlayerTest() {
           )}
         </div>
 
-        {/* Playlist */}
         <div className="space-y-2">
           <h3 className="text-2xl font-semibold mb-4">Playlist</h3>
           {playlist.map((track) => (
@@ -123,6 +114,7 @@ export default function PlayerTest() {
         onTrackSelect={handleTrackSelect}
         onQueueReorder={handleQueueReorder}
         onQueueRemove={handleQueueRemove}
+        onQueueClear={clearQueue}
       />
     </main>
   )

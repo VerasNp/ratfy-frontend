@@ -1,18 +1,18 @@
 "use client"
 
 import { useState } from 'react'
-import { X } from 'lucide-react'
+import { X, Eraser } from 'lucide-react'
 import { Track } from '../Player'
 import Icon from '../Icon'
 import { QueueTrackRow } from './QueueTrackRow'
-
 export interface QueuePanelProps {
   currentTrack:   Track | null
   queue:          Track[]
   onClose:        () => void
   onTrackSelect:  (track: Track) => void
   onQueueReorder: (newQueue: Track[]) => void
-  onQueueRemove:  (trackId: string) => void
+  onQueueRemove: (trackId: string) => void
+  onQueueClear: () => void
 }
 
 export function QueuePanel({
@@ -22,6 +22,7 @@ export function QueuePanel({
   onTrackSelect,
   onQueueReorder,
   onQueueRemove,
+  onQueueClear,
 }: QueuePanelProps) {
   // Both as state — never read refs during render
   const [dragIndex, setDragIndex] = useState<number | null>(null)
@@ -65,13 +66,22 @@ export function QueuePanel({
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 shrink-0 border-b border-white/10">
         <span className="text-white font-bold text-base">Queue</span>
-        <button
-          onClick={onClose}
-          className="text-zinc-500 hover:text-white transition-colors"
-          aria-label="Close queue"
-        >
-          <Icon src={X} size={16} />
-        </button>
+        <div className='flex gap-3'>
+          <button
+            onClick={onQueueClear}
+            className="text-zinc-500 hover:text-white transition-colors"
+            aria-label="Clear Queue"
+          >
+            <Icon src={Eraser} size={16} />
+          </button>
+          <button
+            onClick={onClose}
+            className="text-zinc-500 hover:text-white transition-colors"
+            aria-label="Close queue"
+          >
+            <Icon src={X} size={16} />
+          </button>
+        </div>
       </div>
 
       <div className="flex-1 overflow-y-auto py-2">
