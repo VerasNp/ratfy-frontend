@@ -1,5 +1,21 @@
 import { Track } from "@/components/generics/Player";
 
+
+export interface Album {
+  id:string
+  title: string
+  albumType: string
+  releaseDate: string
+  releasePrecision?:string
+  totalTracks: number
+  label?: string
+  artistIds: string[] | string
+  tracks: Track[] | Track
+  createdAt: string
+  updatedAt?: string
+  albumArtUrl?: string
+}
+
 export const mockedPlaylist: Track[] = [
   {
     id: "1",
@@ -372,8 +388,9 @@ export const mockedPlaylist: Track[] = [
   { id: "72", title: "Cool Down", artist: "Zen Masters", albumArtUrl: "https://picsum.photos/id/72/300/300", audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-16.mp3", duration: 280 },
 
 ];
+
 // Album 1: 10 Tracks
-export const neonNightsAlbum: Track[] = [
+export const neonNightsAlbumTracks: Track[] = [
   { id: "41", title: "Intro: Dusk", artist: "Synthwave Squad", album: "Neon Nights", albumArtUrl: "https://picsum.photos/id/41/300/300", audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3", duration: 120 },
   { id: "42", title: "Grid Runner", artist: "Synthwave Squad", album: "Neon Nights", albumArtUrl: "https://picsum.photos/id/41/300/300", audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3", duration: 215 },
   { id: "43", title: "Cybernetic Heart", artist: "Synthwave Squad", album: "Neon Nights", albumArtUrl: "https://picsum.photos/id/41/300/300", audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3", duration: 198 },
@@ -385,9 +402,8 @@ export const neonNightsAlbum: Track[] = [
   { id: "49", title: "Rogue AI", artist: "Synthwave Squad", album: "Neon Nights", albumArtUrl: "https://picsum.photos/id/41/300/300", audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-9.mp3", duration: 222 },
   { id: "50", title: "Outro: Dawn", artist: "Synthwave Squad", album: "Neon Nights", albumArtUrl: "https://picsum.photos/id/41/300/300", audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-10.mp3", duration: 150 },
 ];
-
 // Album 2: 12 Tracks
-export const acousticWhispersAlbum: Track[] = [
+export const acousticWhispersAlbumTracks: Track[] = [
   { id: "51", title: "Morning Dew", artist: "The Woodsmen", album: "Acoustic Whispers", albumArtUrl: "https://picsum.photos/id/51/300/300", audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-11.mp3", duration: 180 },
   { id: "52", title: "Cabin Fire", artist: "The Woodsmen", album: "Acoustic Whispers", albumArtUrl: "https://picsum.photos/id/51/300/300", audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-12.mp3", duration: 205 },
   { id: "53", title: "River Stones", artist: "The Woodsmen", album: "Acoustic Whispers", albumArtUrl: "https://picsum.photos/id/51/300/300", audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-13.mp3", duration: 240 },
@@ -412,4 +428,38 @@ export const workoutHypePlaylist: Track[] = [
   { id: "70", title: "The Wall", artist: "Endurance", album: "Push Through", albumArtUrl: "https://picsum.photos/id/70/300/300", audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-14.mp3", duration: 245 },
   { id: "71", title: "Second Wind", artist: "The Pace Makers", album: "Cardio Kings", albumArtUrl: "https://picsum.photos/id/65/300/300", audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-15.mp3", duration: 195 },
   { id: "72", title: "Cool Down", artist: "Zen Masters", albumArtUrl: "https://picsum.photos/id/72/300/300", audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-16.mp3", duration: 280 },
+];
+export const mockedArtists = [
+  {
+    id:"1",
+    name:"Synthwave Squad"
+  },
+  {
+    id:"2",
+    name:"The Woodsmen"
+  }
+]
+export const mockedAlbums: Album[] = [
+  {
+    id:"1",
+    title:"Neon Nights",
+    albumType: "Album",
+    artistIds: ["1"],
+    releaseDate:"28-06-2026",
+    totalTracks:10,
+    tracks:neonNightsAlbumTracks,
+    createdAt: "28-06-2026",
+    albumArtUrl: "https://picsum.photos/id/41/300/300"
+  },
+  {
+    id:"2",
+    title:"Acoustic Whispers",
+    albumType: "Album",
+    artistIds: ["2"],
+    releaseDate:"28-06-2026",
+    totalTracks:12,
+    tracks:acousticWhispersAlbumTracks,
+    createdAt: "28-06-2026",
+    albumArtUrl: "https://picsum.photos/id/51/300/300"
+  }
 ];
