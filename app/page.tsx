@@ -1,14 +1,15 @@
 "use client";
 
-import PlayerTest from "./test/PlayerTest";
+import Player from "@/components/generics/Player";
 import CardTest from "./test/CardTest";
-
+import { PlayerProvider } from "./context/PlayerContext";
 export default function Home() {
-
   return (
-    <main className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white pb-32">
-      <CardTest></CardTest>
-      <PlayerTest></PlayerTest>
-    </main>
+    <PlayerProvider>
+      <main className="min-h-screen bg-linear-to-b from-gray-900 to-black text-white pb-32">
+        <CardTest />
+        <Player />
+      </main>
+    </PlayerProvider>
   );
 }
