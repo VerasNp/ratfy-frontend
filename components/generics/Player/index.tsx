@@ -8,11 +8,14 @@ import {
   SkipForward,
   Volume2,
   VolumeX,
+  List,
+  ListMusic,
 } from "lucide-react";
 import Button from "../Button";
 import Icon from "../Icon";
 import Image from "../Image";
 import ProgressBar from "../ProgressBar";
+import { QueuePanel } from "../QueuePanel";
 
 export interface Track {
   id: string;
@@ -33,6 +36,8 @@ interface PlayerProps {
   onSeek?: (time: number) => void;
   onVolumeChange?: (volume: number) => void;
   className?: string;
+  queue?: Track[] | null,
+  onTrackSelect?: (track: Track) => void
 }
 
 function formatTime(seconds: number): string {
@@ -50,6 +55,8 @@ export default function Player({
   onPrevious,
   onSeek,
   onVolumeChange,
+  queue,
+  onTrackSelect,
   className = "",
 }: PlayerProps) {
   const audioRef = useRef<HTMLAudioElement>(null);
@@ -57,6 +64,7 @@ export default function Player({
   const [duration, setDuration] = useState(0);
   const [volume, setVolume] = useState(0.7);
   const [isMuted, setIsMuted] = useState(false);
+  const [isQueueOpen, setIsQueueOpen] = useState(false)
 
   // Refs to hold latest callbacks (prevents unnecessary re-registration)
   const onPlayPauseRef = useRef(onPlayPause);
@@ -176,6 +184,7 @@ export default function Player({
     const pauseHandler = () => onPlayPauseRef.current();
     const nextHandler = () => onNextRef.current();
     const prevHandler = () => onPreviousRef.current();
+
 
     navigator.mediaSession.setActionHandler('play', playHandler);
     navigator.mediaSession.setActionHandler('pause', pauseHandler);
@@ -324,6 +333,15 @@ export default function Player({
             variant="ghost"
             size="icon"
             className="cursor-pointer"
+            onClick={() => setIsQueueOpen((q) => !q)}
+            aria-label="Queue"
+          >
+            <Icon src={isQueueOpen ? ListMusic : List }  />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="cursor-pointer"
             onClick={toggleMute}
             aria-label={isMuted ? "Unmute" : "Mute"}
           >
@@ -340,6 +358,17 @@ export default function Player({
             />
           </div>
         </div>
+        {isQueueOpen && (
+          <QueuePanel
+            currentTrack={currentTrack}
+            queue={queue ?? []}
+            onClose={() => setIsQueueOpen(false)}
+            onTrackSelect={(track) => {
+              onTrackSelect?.(track)
+              setIsQueueOpen(false)
+            }}
+          />
+        )}
       </div>
     </div>
   );
