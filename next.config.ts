@@ -13,6 +13,16 @@ const nextConfig = {
       },
       {
         protocol: 'https',
+        hostname: 'picsum.photos',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'www.soundhelix.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
         hostname: 'dn720307.ca.archive.org',
         pathname: '/**'
       },
