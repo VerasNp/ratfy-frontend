@@ -5,7 +5,7 @@ interface CardGroupProps {
     children?: React.ReactNode;
     title?: string;
     className?:string;
-    orientation: string; 
+    orientation: string;
     hiddenTitle?: boolean;
 }
 
@@ -21,9 +21,9 @@ export default function CardGroup (
 ) {
     const layoutClasses = {
         vertical: ` flex flex-col overflow-x-hidden w-full gap-1`,
-        horizontal: ` flex flex-row overflow-x-scroll scrollbar-hide px-1 gap-2 `
+        horizontal: ` flex flex-row overflow-x-scroll min-h-[320px] scrollbar-hide px-1 gap-2 `
     }
-    const flexOrientation = orientation === "vertical" ? "flex-col" : "flex-row"; 
+    const flexOrientation = orientation === "vertical" ? "flex-col" : "flex-row";
     return (
         <Container
             className={`${className} w-full`}

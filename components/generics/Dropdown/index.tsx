@@ -93,7 +93,7 @@ export default function Dropdown({
 							<button
 								key={dropdownItem.id}
 								role="menuitem"
-								className="px-2 py-2 w-full text-left hover:bg-bg-elevated-highlight rounded-sm transition-colors duration-200 flex items-center gap-2 cursor-pointer"
+								className="px-2 py-2 w-full text-left hover:text-green-400 hover:bg-bg-elevated-highlight rounded-sm transition-colors duration-200 flex items-center gap-2 cursor-pointer"
 								onClick={() => {
 									handleClose();
 									dropdownItem.onSelect?.();
