@@ -390,7 +390,7 @@ export const mockedPlaylist: Track[] = [
 ];
 
 // Album 1: 10 Tracks
-export const neonNightsAlbumTracks: Track[] = [
+const neonNightsAlbumTracks: Track[] = [
   { id: "41", title: "Intro: Dusk", artist: "Synthwave Squad", album: "Neon Nights", albumArtUrl: "https://picsum.photos/id/41/300/300", audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3", duration: 120 },
   { id: "42", title: "Grid Runner", artist: "Synthwave Squad", album: "Neon Nights", albumArtUrl: "https://picsum.photos/id/41/300/300", audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3", duration: 215 },
   { id: "43", title: "Cybernetic Heart", artist: "Synthwave Squad", album: "Neon Nights", albumArtUrl: "https://picsum.photos/id/41/300/300", audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3", duration: 198 },
@@ -403,7 +403,7 @@ export const neonNightsAlbumTracks: Track[] = [
   { id: "50", title: "Outro: Dawn", artist: "Synthwave Squad", album: "Neon Nights", albumArtUrl: "https://picsum.photos/id/41/300/300", audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-10.mp3", duration: 150 },
 ];
 // Album 2: 12 Tracks
-export const acousticWhispersAlbumTracks: Track[] = [
+const acousticWhispersAlbumTracks: Track[] = [
   { id: "51", title: "Morning Dew", artist: "The Woodsmen", album: "Acoustic Whispers", albumArtUrl: "https://picsum.photos/id/51/300/300", audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-11.mp3", duration: 180 },
   { id: "52", title: "Cabin Fire", artist: "The Woodsmen", album: "Acoustic Whispers", albumArtUrl: "https://picsum.photos/id/51/300/300", audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-12.mp3", duration: 205 },
   { id: "53", title: "River Stones", artist: "The Woodsmen", album: "Acoustic Whispers", albumArtUrl: "https://picsum.photos/id/51/300/300", audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-13.mp3", duration: 240 },
@@ -417,7 +417,7 @@ export const acousticWhispersAlbumTracks: Track[] = [
   { id: "61", title: "Quiet Stream", artist: "The Woodsmen", album: "Acoustic Whispers", albumArtUrl: "https://picsum.photos/id/51/300/300", audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3", duration: 225 },
   { id: "62", title: "Rest", artist: "The Woodsmen", album: "Acoustic Whispers", albumArtUrl: "https://picsum.photos/id/51/300/300", audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3", duration: 165 },
 ];
-export const workoutHypePlaylist: Track[] = [
+const workoutHypePlaylistTracks: Track[] = [
   { id: "63", title: "Adrenaline", artist: "DJ Flex", album: "Pump Up", albumArtUrl: "https://picsum.photos/id/63/300/300", audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-7.mp3", duration: 190 },
   { id: "64", title: "Heavy Lifter", artist: "Iron Core", albumArtUrl: "https://picsum.photos/id/64/300/300", audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3", duration: 210 },
   { id: "65", title: "Sprint", artist: "The Pace Makers", album: "Cardio Kings", albumArtUrl: "https://picsum.photos/id/65/300/300", audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-9.mp3", duration: 175 },
@@ -429,6 +429,7 @@ export const workoutHypePlaylist: Track[] = [
   { id: "71", title: "Second Wind", artist: "The Pace Makers", album: "Cardio Kings", albumArtUrl: "https://picsum.photos/id/65/300/300", audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-15.mp3", duration: 195 },
   { id: "72", title: "Cool Down", artist: "Zen Masters", albumArtUrl: "https://picsum.photos/id/72/300/300", audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-16.mp3", duration: 280 },
 ];
+
 export const mockedArtists = [
   {
     id:"1",
@@ -437,6 +438,28 @@ export const mockedArtists = [
   {
     id:"2",
     name:"The Woodsmen"
+  }
+]
+export interface Playlist {
+  id: string,
+  title: string,
+  albumType: string,
+  artistsIds: string | string[],
+  totalTracks: number,
+  tracks: Track[],
+  createdAt: string,
+  albumArtUrl: string,
+}
+export const mockedPlaylists: Playlist[] = [
+  {
+      id: "1",
+      title: "Workout Hype Playlist",
+      albumType: "Playlist",
+      artistsIds: "Nokx",
+      totalTracks: 10,
+      tracks: workoutHypePlaylistTracks,
+      createdAt: "28-06-2026",
+      albumArtUrl: "https://picsum.photos/id/64/300/300",
   }
 ]
 export const mockedAlbums: Album[] = [

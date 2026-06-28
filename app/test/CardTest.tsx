@@ -5,7 +5,7 @@ import CardGroup from "@/components/generics/CardGroup";
 import Placeholder from "@/public/placeholder_1024.jpg";
 import { Play, ListPlus } from "lucide-react";
 import { Track } from "@/components/generics/Player";
-import { mockedPlaylist, mockedArtists, mockedAlbums } from "./TrackList";
+import { mockedPlaylist, mockedArtists, mockedAlbums, mockedPlaylists } from "./TrackList";
 import { usePlayer } from "@/app/context/PlayerContext";
 
 export default function CardTest() {
@@ -61,7 +61,31 @@ export default function CardTest() {
           );
         })}
       </CardGroup>
+      <CardGroup title="Playlists Populares" orientation="horizontal">
+        {mockedPlaylists.map((album) => {
+          const tracks = Array.isArray(album.tracks) ? album.tracks : [album.tracks];
 
+          return (
+            <Card
+              key={album.id}
+              title={album.title}
+              subtitle={""}
+              imageSrc={album.albumArtUrl || Placeholder}
+              cardType={album.albumType}
+              cardOwner={
+                Array.isArray(album.artistIds)
+                  ? album.artistIds
+                      .map((artistId) => mockedArtists.find((a) => a.id === artistId)?.name)
+                      .filter(Boolean)
+                      .join(", ")
+                  : album.artistIds
+              }
+              orientation="vertical"
+              dropdownItems={cardDropdownActions(tracks)}
+            />
+          );
+        })}
+      </CardGroup>
       <CardGroup title="Populares" orientation="horizontal">
         {popularTracks.map((track) => {
           return (
@@ -70,7 +94,7 @@ export default function CardTest() {
               title={track.title}
               subtitle={track.album ?? ""}
               imageSrc={track.albumArtUrl || Placeholder}
-              cardType="Single"
+              cardType="Playlist"
               cardOwner={track.artist}
               orientation="vertical"
               dropdownItems={cardDropdownActions([track])}
