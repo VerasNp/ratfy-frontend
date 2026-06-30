@@ -1,12 +1,12 @@
 import Icon from "../Icon";
 import Image from "../Image/index";
 import Text from "../Text/index";
-import Dropdown from "../Dropdown"; // Adjust path if necessary
+import Dropdown from "../Dropdown";
 import PinnedPlaceholder from "../../../public/pin.svg";
 import { StaticImageData } from "next/image";
-import { MoreHorizontal } from "lucide-react"; // Make sure to import this
+import { MoreHorizontal } from "lucide-react";
+import Placeholder from "@/public/placeholder_1024.jpg"
 
-// Define the shape of a dropdown item based on your Dropdown component
 export interface DropdownItem {
   id: string;
   icon?: React.ReactNode;
@@ -34,7 +34,7 @@ interface CardProps {
   hoverMask?: string;
   linkRedirect?: string;
   isPinned?: boolean;
-  dropdownItems?: DropdownItem[]; // <-- New Prop added here
+  dropdownItems?: DropdownItem[];
 }
 
 export default function Card({
@@ -45,7 +45,7 @@ export default function Card({
   hoverBgColor = "var(--bg-highlight)",
   subtitleSize = "14px",
   imageSrc,
-  cardType = "Playlist",
+  cardType = "",
   cardOwner = [],
   imageBorder = "rounded",
   imageSize = 160,
@@ -54,7 +54,7 @@ export default function Card({
   orientation = "vertical",
   className = "",
   isPinned = false,
-  dropdownItems, // <-- Destructured here
+  dropdownItems,
   children,
   ...extra
 }: CardProps) {
@@ -89,7 +89,7 @@ export default function Card({
     >
       <div className="flex shrink-0 self-center">
         <Image
-          src={imageSrc}
+          src={imageSrc || Placeholder}
           alt={`Capa de ${title}`}
           size={orientation === "horizontal" ? 56 : imageSize}
           shape={cardBorder}
