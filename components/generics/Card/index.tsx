@@ -120,12 +120,13 @@ export default function Card({
 
       {dropdownItems && dropdownItems.length > 0 && (
         <div
-          className="absolute top-2 left-0 w-full px-2 opacity-0 group-hover:opacity-100 transition-opacity z-20"
+          className="absolute top-2 right-0 w-full px-2 opacity-0 group-hover:opacity-100 transition-opacity z-20"
           onClick={(e) => e.stopPropagation()}
         >
           <Dropdown
+            align="right"
             triggerComponent={
-              <div className="w-full ml-auto flex justify-center items-center bg-black/70 backdrop-blur-md rounded-md p-1 cursor-pointer">
+              <div className="w-1/5 ml-auto flex justify-center items-center bg-black/70 backdrop-blur-md rounded-md p-1 cursor-pointer">
                 <MoreHorizontal
                   size={20}
                   className="text-white hover:text-green-400 transition-colors"
