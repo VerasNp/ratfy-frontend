@@ -12,11 +12,13 @@ type DropdownItem = {
 interface DropdownProps {
 	items?: DropdownItem[];
 	triggerComponent?: React.ReactNode;
+	align?: "left" | "right";
 }
 
 export default function Dropdown({
 	items: itens,
 	triggerComponent,
+	align = "right",
 }: DropdownProps) {
 	const [isOpen, setIsOpen] = useState(false);
 	const dropdownRef = useRef<HTMLDivElement>(null);
@@ -66,44 +68,42 @@ export default function Dropdown({
 		}
 	}, [isOpen]);
 
+	const alignmentClass = align === "right" ? "right-0" : "left-0";
+
 	return (
-		<div className="relative inline-block w-full" ref={dropdownRef}>
+		<div className="relative inline-block" ref={dropdownRef}>
 			<button
 				ref={triggerRef}
 				onClick={() => setIsOpen(!isOpen)}
 				aria-expanded={isOpen}
 				aria-haspopup="menu"
 				aria-controls={menuId}
-				className="px-4 py-2 text-white flex items-center justify-between cursor-pointer relative z-10"
+				className="flex items-center justify-center cursor-pointer relative z-10"
 			>
-				<span className="flex items-center gap-2">
-					{triggerComponent || "Dropdown"}
-				</span>
+				{triggerComponent || "Dropdown"}
 			</button>
 
 			{isOpen && (
 				<div
-					className="absolute top-full left-0 w-full mt-1 bg-bg-elevated-main rounded-sm z-50"
+					className={`absolute top-full ${alignmentClass} min-w-[220px] mt-2 bg-[var(--bg-elevated-highlight)] rounded-md shadow-2xl z-50 p-1`}
 					onClick={handleMenuClick}
 					id={menuId}
 					role="menu"
 				>
-					<div className="m-1 ">
-						{itens?.map((dropdownItem) => (
-							<button
-								key={dropdownItem.id}
-								role="menuitem"
-								className="px-2 py-2 w-full text-left hover:bg-bg-elevated-highlight rounded-sm transition-colors duration-200 flex items-center gap-2 cursor-pointer"
-								onClick={() => {
-									handleClose();
-									dropdownItem.onSelect?.();
-								}}
-							>
-								{dropdownItem.icon}
-								{dropdownItem.item}
-							</button>
-						))}
-					</div>
+					{itens?.map((dropdownItem) => (
+						<button
+							key={dropdownItem.id}
+							role="menuitem"
+							className="px-3 py-3 w-full text-left hover:bg-white/10 rounded-sm transition-colors duration-200 flex items-center gap-3 cursor-pointer text-white"
+							onClick={() => {
+								handleClose();
+								dropdownItem.onSelect?.();
+							}}
+						>
+							{dropdownItem.icon}
+							{dropdownItem.item}
+						</button>
+					))}
 				</div>
 			)}
 		</div>
