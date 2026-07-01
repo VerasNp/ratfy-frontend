@@ -8,7 +8,7 @@ interface CardGroupProps {
     orientation: string;
     hiddenTitle?: boolean;
 }
-
+import styles from "./Scrollbar.module.css"
 export default function CardGroup (
     {
         children = {},
@@ -20,8 +20,8 @@ export default function CardGroup (
     }
 ) {
     const layoutClasses = {
-        vertical: ` flex flex-col overflow-x-hidden w-full gap-1`,
-        horizontal: ` flex flex-row overflow-x-scroll min-h-[320px] scrollbar-hide px-1 gap-2 `
+        vertical: ` flex flex-col overflow-x-hidden overflow-y-scroll w-full gap-1 ${styles.scrollContainer}`,
+        horizontal: ` flex flex-row overflow-x-scroll overflow-y-hidden min-h-[320px] px-1 gap-2 ${styles.scrollContainer}`
     }
     const flexOrientation = orientation === "vertical" ? "flex-col" : "flex-row";
     return (
