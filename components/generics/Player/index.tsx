@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Play,
   Pause,
@@ -8,11 +8,14 @@ import {
   SkipForward,
   Volume2,
   VolumeX,
+  List as ListMusicIcon,
 } from "lucide-react";
 import Button from "../Button";
 import Icon from "../Icon";
 import Image from "../Image";
 import ProgressBar from "../ProgressBar";
+import { QueuePanel } from "../QueuePanel";
+import { usePlayer, } from "@/app/context/PlayerContext"; // Adjust path to your context if needed
 
 export interface Track {
   id: string;
@@ -23,16 +26,10 @@ export interface Track {
   audioUrl: string;
   duration?: number;
 }
-
 interface PlayerProps {
-  currentTrack: Track | null;
-  isPlaying: boolean;
-  onPlayPause: () => void;
-  onNext: () => void;
-  onPrevious: () => void;
+  className?: string;
   onSeek?: (time: number) => void;
   onVolumeChange?: (volume: number) => void;
-  className?: string;
 }
 
 function formatTime(seconds: number): string {
@@ -43,82 +40,108 @@ function formatTime(seconds: number): string {
 }
 
 export default function Player({
-  currentTrack,
-  isPlaying,
-  onPlayPause,
-  onNext,
-  onPrevious,
+  className = "",
   onSeek,
   onVolumeChange,
-  className = "",
 }: PlayerProps) {
-  const audioRef = useRef<HTMLAudioElement>(null);
+  const {
+    queue,
+    setQueue,
+    currentTrack,
+    setCurrentTrack,
+    isPlaying,
+    setIsPlaying,
+  } = usePlayer();
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [volume, setVolume] = useState(0.7);
   const [isMuted, setIsMuted] = useState(false);
+  const [isQueueOpen, setIsQueueOpen] = useState(false);
 
-  // Refs to hold latest callbacks (prevents unnecessary re-registration)
-  const onPlayPauseRef = useRef(onPlayPause);
-  const onNextRef = useRef(onNext);
-  const onPreviousRef = useRef(onPrevious);
+  const audioRef = useRef<HTMLAudioElement>(null);
   const onSeekRef = useRef(onSeek);
 
   useEffect(() => {
-    onPlayPauseRef.current = onPlayPause;
-    onNextRef.current = onNext;
-    onPreviousRef.current = onPrevious;
     onSeekRef.current = onSeek;
-  }, [onPlayPause, onNext, onPrevious, onSeek]);
+  }, [onSeek]);
+  const handlePlayPause = () => setIsPlaying((p) => !p);
 
-  // Load new track when currentTrack changes
+  const handleNext = () => {
+    if (queue.length === 0 || !currentTrack) {
+      setIsPlaying(false);
+      return;
+    }
+    const currentIndex = queue.findIndex((t) => t.id === currentTrack.id);
+    const nextTrack = queue[currentIndex + 1];
+
+    if (nextTrack) {
+      setCurrentTrack(nextTrack);
+      setIsPlaying(true);
+    } else {
+      setIsPlaying(false);
+    }
+  };
+
+  const handlePrevious = () => {
+    if (!currentTrack) return;
+    const currentIndex = queue.findIndex((t) => t.id === currentTrack.id);
+    if (currentIndex <= 0) return;
+
+    const prev = queue[currentIndex - 1];
+    setCurrentTrack(prev);
+    setIsPlaying(true);
+  };
+
+  const handleTrackSelect = (track: Track) => {
+    setCurrentTrack(track);
+    setIsPlaying(true);
+  };
+
+  const handleQueueReorder = (newQueue: Track[]) => {
+    setQueue(newQueue);
+  };
+
+  const handleQueueRemove = (trackId: string) => {
+    setQueue((q) => q.filter((t) => t.id !== trackId));
+  };
+
+  const clearQueue = () => {
+    setQueue([]);
+  };
   useEffect(() => {
     if (audioRef.current && currentTrack) {
       audioRef.current.pause();
       audioRef.current.src = currentTrack.audioUrl;
       audioRef.current.load();
-
       setCurrentTime(0);
       setDuration(0);
-
       if (isPlaying) {
         audioRef.current.play().catch((err) => {
-          if (err.name !== 'AbortError') {
-            console.error("Play error:", err);
-          }
+          if (err.name !== "AbortError") console.error("Play error:", err);
         });
       }
     }
   }, [currentTrack]);
 
-  // Handle play/pause based on isPlaying prop
   useEffect(() => {
-    if (audioRef.current) {
-      if (isPlaying) {
-        audioRef.current.play().catch((err) => console.error("Play error:", err));
-      } else {
-        audioRef.current.pause();
-      }
+    if (!audioRef.current) return;
+    if (isPlaying) {
+      audioRef.current.play().catch((err) => console.error("Play error:", err));
+    } else {
+      audioRef.current.pause();
     }
   }, [isPlaying]);
 
-  // Set initial volume
   useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current.volume = volume;
-    }
+    if (audioRef.current) audioRef.current.volume = volume;
   }, [volume]);
 
   const handleTimeUpdate = () => {
-    if (audioRef.current) {
-      setCurrentTime(audioRef.current.currentTime);
-    }
+    if (audioRef.current) setCurrentTime(audioRef.current.currentTime);
   };
 
   const handleLoadedMetadata = () => {
-    if (audioRef.current) {
-      setDuration(audioRef.current.duration);
-    }
+    if (audioRef.current) setDuration(audioRef.current.duration);
   };
 
   const handleSeek = (newTime: number) => {
@@ -132,113 +155,83 @@ export default function Player({
   const handleVolumeChange = (newVolume: number) => {
     setVolume(newVolume);
     setIsMuted(newVolume === 0);
-    if (audioRef.current) {
-      audioRef.current.volume = newVolume;
-    }
+    if (audioRef.current) audioRef.current.volume = newVolume;
     onVolumeChange?.(newVolume);
   };
 
   const toggleMute = () => {
     if (isMuted) {
-      const newVolume = volume === 0 ? 0.7 : volume;
-      handleVolumeChange(newVolume);
+      handleVolumeChange(volume === 0 ? 0.7 : volume);
     } else {
       handleVolumeChange(0);
     }
   };
-
-  const handleTrackEnd = () => {
-    onNextRef.current();
-  };
-
-  // Media Session API integration (stable, no unnecessary re-runs)
   useEffect(() => {
-    if (!currentTrack) return;
-    if (!('mediaSession' in navigator)) return;
+    if (!currentTrack || !("mediaSession" in navigator)) return;
 
-    // Set metadata
     navigator.mediaSession.metadata = new MediaMetadata({
       title: currentTrack.title,
       artist: currentTrack.artist,
-      album: currentTrack.album || '',
-      artwork: [{ src: currentTrack.albumArtUrl, sizes: '512x512' }],
+      album: currentTrack.album ?? "",
+      artwork: [{ src: currentTrack.albumArtUrl, sizes: "512x512" }],
     });
 
-    // Reset position state (prevents showing old duration)
-    navigator.mediaSession.setPositionState({
-      duration: 0,
-      position: 0,
-      playbackRate: 1,
-    });
+    navigator.mediaSession.setPositionState({ duration: 0, position: 0, playbackRate: 1 });
 
-    // Register action handlers that call the latest callbacks via refs
-    const playHandler = () => onPlayPauseRef.current();
-    const pauseHandler = () => onPlayPauseRef.current();
-    const nextHandler = () => onNextRef.current();
-    const prevHandler = () => onPreviousRef.current();
-
-    navigator.mediaSession.setActionHandler('play', playHandler);
-    navigator.mediaSession.setActionHandler('pause', pauseHandler);
-    navigator.mediaSession.setActionHandler('previoustrack', prevHandler);
-    navigator.mediaSession.setActionHandler('nexttrack', nextHandler);
+    navigator.mediaSession.setActionHandler("play", () => handlePlayPause());
+    navigator.mediaSession.setActionHandler("pause", () => handlePlayPause());
+    navigator.mediaSession.setActionHandler("previoustrack", () => handlePrevious());
+    navigator.mediaSession.setActionHandler("nexttrack", () => handleNext());
 
     if (onSeekRef.current) {
-      navigator.mediaSession.setActionHandler('seekto', (details) => {
+      navigator.mediaSession.setActionHandler("seekto", (details) => {
         if (details.seekTime !== undefined) onSeekRef.current?.(details.seekTime);
       });
     }
 
-    // Cleanup handlers on track change or unmount
     return () => {
-      if ('mediaSession' in navigator) {
-        navigator.mediaSession.setActionHandler('play', null);
-        navigator.mediaSession.setActionHandler('pause', null);
-        navigator.mediaSession.setActionHandler('previoustrack', null);
-        navigator.mediaSession.setActionHandler('nexttrack', null);
-        navigator.mediaSession.setActionHandler('seekto', null);
-      }
+      if (!("mediaSession" in navigator)) return;
+      navigator.mediaSession.setActionHandler("play", null);
+      navigator.mediaSession.setActionHandler("pause", null);
+      navigator.mediaSession.setActionHandler("previoustrack", null);
+      navigator.mediaSession.setActionHandler("nexttrack", null);
+      navigator.mediaSession.setActionHandler("seekto", null);
     };
-  }, [currentTrack]); // Only depends on currentTrack, not on the callback functions
+  }, [currentTrack]);
 
-  // Update playback state (playing/paused)
   useEffect(() => {
-    if ('mediaSession' in navigator) {
-      navigator.mediaSession.playbackState = isPlaying ? 'playing' : 'paused';
+    if ("mediaSession" in navigator) {
+      navigator.mediaSession.playbackState = isPlaying ? "playing" : "paused";
     }
   }, [isPlaying]);
 
-  // Update position state when duration or currentTime changes
   useEffect(() => {
-    if ('mediaSession' in navigator && duration > 0) {
+    if ("mediaSession" in navigator && duration > 0) {
+      const safePosition = Math.max(0, Math.min(currentTime, duration));
       navigator.mediaSession.setPositionState({
-        duration: duration,
-        position: currentTime,
+        duration,
+        position: safePosition,
         playbackRate: 1,
       });
     }
   }, [currentTime, duration]);
 
-  if (!currentTrack) {
-    return null;
-  }
+  if (!currentTrack) return null;
 
   const artistDisplay = currentTrack.album
     ? `${currentTrack.artist} • ${currentTrack.album}`
     : currentTrack.artist;
 
   return (
-    <div
-      className={`fixed bottom-0 left-0 right-0 z-50 bg-black/90 backdrop-blur-lg border-t border-white/10 px-4 py-3 ${className}`}
-    >
+    <div className={`fixed bottom-0 left-0 right-0 z-50 bg-black/90 backdrop-blur-lg border-t border-white/10 px-4 py-3 ${className}`}>
       <audio
         ref={audioRef}
         onTimeUpdate={handleTimeUpdate}
         onLoadedMetadata={handleLoadedMetadata}
-        onEnded={handleTrackEnd}
+        onEnded={handleNext}
       />
 
       <div className="grid h-16 grid-cols-[minmax(0,1fr)_minmax(0,56rem)_minmax(0,1fr)] items-center gap-4">
-        {/* Left section */}
         <div className="flex min-w-0 items-center gap-3 justify-self-start overflow-hidden">
           <Image
             src={currentTrack.albumArtUrl}
@@ -247,92 +240,64 @@ export default function Player({
             shape="rounded"
             className="shadow-lg shrink-0"
           />
-
           <div className="min-w-0 overflow-hidden">
-            <p
-              className="truncate text-sm font-medium leading-5 text-white"
-              title={currentTrack.title}
-            >
+            <p className="truncate text-sm font-medium leading-5 text-white" title={currentTrack.title}>
               {currentTrack.title}
             </p>
-            <p
-              className="truncate text-xs leading-4 text-zinc-400"
-              title={artistDisplay}
-            >
+            <p className="truncate text-xs leading-4 text-zinc-400" title={artistDisplay}>
               {artistDisplay}
             </p>
           </div>
         </div>
 
-        {/* Center section */}
         <div className="flex min-w-0 w-full flex-col items-center justify-center gap-1 justify-self-center">
           <div className="flex items-center gap-4">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="cursor-pointer"
-              onClick={onPrevious}
-              aria-label="Previous track"
-            >
+            <Button variant="ghost" size="icon" className="cursor-pointer" onClick={handlePrevious} aria-label="Previous track">
               <Icon src={SkipBack} size={20} />
             </Button>
-
             <Button
               variant="brand"
               size="icon"
-              onClick={onPlayPause}
+              onClick={handlePlayPause}
               aria-label={isPlaying ? "Pause" : "Play"}
               className="h-10 w-10 rounded-full bg-white text-black transition-transform hover:scale-105 cursor-pointer"
             >
               <Icon src={isPlaying ? Pause : Play} size={20} />
             </Button>
-
-            <Button
-              variant="ghost"
-              size="icon"
-              className="cursor-pointer"
-              onClick={onNext}
-              aria-label="Next track"
-            >
+            <Button variant="ghost" size="icon" className="cursor-pointer" onClick={handleNext} aria-label="Next track">
               <Icon src={SkipForward} size={20} />
             </Button>
           </div>
 
-          {/* Progress bar */}
           <div className="flex w-full max-w-xl items-center gap-2">
-            <span className="shrink-0 text-xs tabular-nums text-zinc-400">
-              {formatTime(currentTime)}
-            </span>
-
-            <ProgressBar
-              value={currentTime}
-              max={duration || 0}
-              onChange={handleSeek}
-              formatValue={formatTime}
-              showTooltip
-            />
-
-            <span className="shrink-0 text-xs tabular-nums text-zinc-400">
-              {formatTime(duration)}
-            </span>
+            <span className="shrink-0 text-xs tabular-nums text-zinc-400">{formatTime(currentTime)}</span>
+            <ProgressBar value={currentTime} max={duration || 0} onChange={handleSeek} formatValue={formatTime} showTooltip />
+            <span className="shrink-0 text-xs tabular-nums text-zinc-400">{formatTime(duration)}</span>
           </div>
         </div>
 
-        {/* Right section */}
+        {/* Right — volume + queue toggle */}
         <div className="flex items-center justify-end gap-2 justify-self-end">
           <Button
             variant="ghost"
             size="icon"
             className="cursor-pointer"
-            onClick={toggleMute}
-            aria-label={isMuted ? "Unmute" : "Mute"}
+            onClick={() => setIsQueueOpen((q) => !q)}
+            aria-label="Queue"
           >
+            <ListMusicIcon
+              size={18}
+              color={isQueueOpen ? "var(--bg-brand)" : "var(--text-primary)"}
+            />
+          </Button>
+
+          <Button variant="ghost" size="icon" className="cursor-pointer" onClick={toggleMute} aria-label={isMuted ? "Unmute" : "Mute"}>
             <Icon src={isMuted ? VolumeX : Volume2} size={18} />
           </Button>
 
           <div className="w-24">
             <ProgressBar
-              value={volume}
+              value={isMuted ? 0 : volume}
               max={1}
               onChange={handleVolumeChange}
               formatValue={(v) => `${Math.round(v * 100)}%`}
@@ -341,6 +306,22 @@ export default function Player({
           </div>
         </div>
       </div>
+
+      {/* Queue panel */}
+      {isQueueOpen && (
+        <QueuePanel
+          currentTrack={currentTrack}
+          queue={queue}
+          onClose={() => setIsQueueOpen(false)}
+          onTrackSelect={(track) => {
+            handleTrackSelect(track);
+            setIsQueueOpen(false);
+          }}
+          onQueueReorder={handleQueueReorder}
+          onQueueRemove={handleQueueRemove}
+          onQueueClear={clearQueue}
+        />
+      )}
     </div>
   );
 }

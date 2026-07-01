@@ -5,10 +5,10 @@ interface CardGroupProps {
     children?: React.ReactNode;
     title?: string;
     className?:string;
-    orientation: string; 
+    orientation: string;
     hiddenTitle?: boolean;
 }
-
+import styles from "./Scrollbar.module.css"
 export default function CardGroup (
     {
         children = {},
@@ -20,10 +20,10 @@ export default function CardGroup (
     }
 ) {
     const layoutClasses = {
-        vertical: ` flex flex-col overflow-x-hidden w-full gap-1`,
-        horizontal: ` flex flex-row overflow-x-scroll scrollbar-hide px-1 gap-2 `
+        vertical: ` flex flex-col overflow-x-hidden overflow-y-scroll w-full gap-1 ${styles.scrollContainer}`,
+        horizontal: ` flex flex-row overflow-x-scroll overflow-y-hidden min-h-[320px] px-1 gap-2 ${styles.scrollContainer}`
     }
-    const flexOrientation = orientation === "vertical" ? "flex-col" : "flex-row"; 
+    const flexOrientation = orientation === "vertical" ? "flex-col" : "flex-row";
     return (
         <Container
             className={`${className} w-full`}
