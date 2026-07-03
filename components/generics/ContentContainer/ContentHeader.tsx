@@ -1,0 +1,249 @@
+"use client"
+
+import { useEffect, useRef, useState } from "react"
+import { Heart, MoreHorizontal, Play, Pause, Pencil } from "lucide-react"
+import Image from "../Image"
+import Icon from "../Icon"
+import { getColorSync, getPaletteSync, getSwatches } from 'colorthief';
+import { usePlayer } from "@/app/context/PlayerContext"
+import { Track } from "../Player"
+// ── Types ─────────────────────────────────────────────────────────────────────
+
+export type ContentType = "Album" | "Playlist" | "Single" | "Track" | null
+
+interface ContentHeaderProps {
+  className?: string
+  id:             string
+  title:          string
+  headerType:     ContentType
+  headerArtUrl:   string
+  totalTracks:    number
+  tracks:         Track[]
+  releaseDate:    string | Date
+  artistsID:      string | string[]
+  durationTotal?: number               // seconds
+  contentViews?:  number
+  isLiked?:       boolean
+  onPlay?:        () => void
+  onLike?:        () => void
+  onEdit?:        () => void           // playlist only
+  onMore?:        () => void
+}
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+
+function formatDuration(totalSeconds: number): string {
+  if (!totalSeconds) return ""
+  const h   = Math.floor(totalSeconds / 3600)
+  const m   = Math.floor((totalSeconds % 3600) / 60)
+  const s   = totalSeconds % 60
+  if (h > 0) return `${h} hr ${m} min`
+  if (m > 0) return `${m} min ${s > 0 ? `${s} sec` : ""}`
+  return `${s} sec`
+}
+
+function formatYear(date: string | Date): string {
+  return new Date(date).getFullYear().toString()
+}
+
+function formatViews(n: number): string {
+  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M plays`
+  if (n >= 1_000)     return `${(n / 1_000).toFixed(0)}K plays`
+  return `${n} plays`
+}
+function deriveAccentFromUrl(url: string): string {
+  let hash = 0
+  for (let i = 0; i < url.length; i++) hash = url.charCodeAt(i) + ((hash << 5) - hash)
+  const hue = Math.abs(hash) % 360
+  return `hsl(${hue},35%,22%)`
+}
+
+// ── Component ─────────────────────────────────────────────────────────────────
+
+export default function ContentHeader({
+  className = "",
+  id,
+  title,
+  headerType,
+  headerArtUrl,
+  totalTracks,
+  releaseDate,
+  artistsID,
+  durationTotal   = 0,
+  contentViews    = 0,
+  isLiked         = false,
+  tracks,
+  onPlay,
+  onLike,
+  onEdit,
+  onMore,
+}: ContentHeaderProps) {
+  const { playNow, playNext, addToQueue, currentTrack } = usePlayer();
+  const [ isAlbumPlaying, setAlbumPlaying ] = useState(false);
+  const [accentColor, setAccentColor] = useState(() => deriveAccentFromUrl(headerArtUrl))
+  const imgRef = useRef<HTMLImageElement>(null)
+  const handleImageLoad = () => {
+    try {
+      if (imgRef.current) {
+        const [r, g, b] = getColorSync(imgRef.current)
+        setAccentColor(`rgb(${Math.round(r * 0.6)},${Math.round(g * 0.6)},${Math.round(b * 0.6)})`)
+      }
+    } catch {
+      // colorthief not installed — keep the derived fallback, no-op
+    }
+  }
+  const handleAlbumPlaying = (id: string) => {
+    for (const t of tracks) {
+      if (t.id === currentTrack?.album) { setAlbumPlaying(true); return}
+    }
+    setAlbumPlaying(false)
+  }
+
+  const artists       = Array.isArray(artistsID) ? artistsID : [artistsID]
+  const isPlaylist    = headerType === "Playlist"
+  const isSingle      = headerType === "Single"
+  const titleSize     = title.length > 20 ? "text-3xl" : title.length > 12 ? "text-5xl" : "text-6xl"
+
+  return (
+    <div className={`flex flex-col ${className}`}>
+
+      {/* ── Gradient hero ──────────────────────────────────────────────────── */}
+      <div
+        className="relative flex items-end gap-6 px-6 pt-16 pb-6 min-h-[260px]"
+        style={{
+          background: `linear-gradient(to bottom, ${accentColor} 0%, rgba(0,0,0,0.7) 100%)`,
+        }}
+      >
+        {/* Album / single art */}
+        {!isPlaylist && (
+          <div className="relative shrink-0 w-48 h-48 shadow-2xl rounded">
+            <img
+              ref={imgRef}
+              src={headerArtUrl}
+              alt=""
+              aria-hidden
+              className="absolute opacity-0 w-0 h-0"
+              crossOrigin="anonymous"
+              onLoad={handleImageLoad}
+            />
+            <Image
+              src={headerArtUrl}
+              alt={title}
+              size={192}
+              shape="rounded"
+              className="w-full h-full object-cover"
+            />
+          </div>
+        )}
+        {isPlaylist && (
+          <div
+            className="shrink-0 w-48 h-48 rounded shadow-2xl grid grid-cols-2 overflow-hidden"
+          >
+            {[headerArtUrl, headerArtUrl, headerArtUrl, headerArtUrl].map((url, i) => (
+              <Image key={i} src={url} alt="" size={96} className="w-full h-full object-cover" />
+            ))}
+          </div>
+        )}
+
+        {/* Text block */}
+        <div className="flex flex-col gap-2 min-w-0 pb-1">
+          <span className="text-[11px] font-semibold uppercase tracking-widest text-white/70">
+            {headerType}
+          </span>
+
+          <h1 className={`font-bold text-white leading-tight ${titleSize}`}>
+            {title}
+          </h1>
+
+          {/* Meta row */}
+          <div className="flex items-center gap-2 flex-wrap mt-1">
+            {/* Artist avatars + names */}
+            {artists.map((artist, i) => (
+              <span key={artist} className="flex items-center gap-1.5">
+                <span className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-content:center text-[9px] font-bold text-white shrink-0 flex items-center justify-center">
+                  {artist.charAt(0).toUpperCase()}
+                </span>
+                <span className="text-sm font-semibold text-white hover:underline cursor-pointer">
+                  {artist}
+                </span>
+                {i < artists.length - 1 && (
+                  <span className="text-white/50">,</span>
+                )}
+              </span>
+            ))}
+
+            <span className="text-white/50 text-xs">•</span>
+            <span className="text-sm text-white/65">{formatYear(releaseDate)}</span>
+
+            <span className="text-white/50 text-xs">•</span>
+            <span className="text-sm text-white/65">
+              {totalTracks} {totalTracks === 1 ? "track" : "tracks"}
+            </span>
+
+            {durationTotal > 0 && (
+              <>
+                <span className="text-white/50 text-xs">•</span>
+                <span className="text-sm text-white/65">{formatDuration(durationTotal)}</span>
+              </>
+            )}
+
+            {contentViews > 0 && (
+              <>
+                <span className="text-white/50 text-xs">•</span>
+                <span className="text-sm text-white/65">{formatViews(contentViews)}</span>
+              </>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* ── Action bar ─────────────────────────────────────────────────────── */}
+      <div className="flex items-center gap-4 px-6 py-5 bg-black/60">
+
+        {/* Play */}
+        <button
+          onClick={() => playNow(tracks)}
+          aria-label={`${isAlbumPlaying ? "Play" : "Pause"} ${title}`}
+          className={`w-14 h-14 rounded-full bg-[#1db954] flex items-center justify-center
+                     hover:bg-[#1ed760] hover:scale-105 active:scale-95
+                     transition-all duration-100 shrink-0`}
+        >
+          <Icon src={isAlbumPlaying ? Play : Pause } size={24} className="text-black ml-0.5" />
+        </button>
+
+        {/* Like / save */}
+        <button
+          onClick={onLike}
+          aria-label={isLiked ? `Remove ${title} from library` : `Save ${title} to library`}
+          className={`transition-colors ${isLiked ? "text-[#1db954]" : "text-white/60 hover:text-white"}`}
+        >
+          <Icon
+            src={Heart}
+            size={28}
+            className={isLiked ? "fill-[#1db954]" : ""}
+          />
+        </button>
+
+        {/* Edit — playlist only */}
+        {isPlaylist && onEdit && (
+          <button
+            onClick={onEdit}
+            aria-label="Edit playlist"
+            className="text-white/60 hover:text-white transition-colors"
+          >
+            <Icon src={Pencil} size={20} />
+          </button>
+        )}
+
+        {/* More */}
+        <button
+          onClick={onMore}
+          aria-label="More options"
+          className="text-white/60 hover:text-white transition-colors"
+        >
+          <Icon src={MoreHorizontal} size={24} />
+        </button>
+      </div>
+    </div>
+  )
+}
