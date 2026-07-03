@@ -22,6 +22,9 @@ export default function SignUpPage() {
 
 	const [isLoading, setIsLoading] = useState(false);
 	const [errorMsg, setErrorMsg] = useState("");
+	
+	const [isResending, setIsResending] = useState(false);
+	const [resendMessage, setResendMessage] = useState("");
 
 	const handleNextStep = () => {
 		setErrorMsg("");
@@ -103,6 +106,36 @@ export default function SignUpPage() {
 		}
 	};
 
+	const handleResendEmail = async () => {
+		setIsResending(true);
+		setResendMessage("");
+		setErrorMsg("");
+
+		try {
+			const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+			const response = await fetch(`${apiUrl}/resend-verification-email`, {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({ email: email }),
+			});
+
+			const data = await response.json();
+
+			if (!response.ok) {
+				throw new Error(data.message || data.error || "Erro ao reenviar e-mail de verificação.");
+			}
+
+			setResendMessage("E-mail reenviado com sucesso! Verifique sua caixa de entrada e spam.");
+			
+		} catch (error: any) {
+			setErrorMsg(error.message);
+		} finally {
+			setIsResending(false);
+		}
+	};
+
 	return (
 		<Container className="min-h-screen bg-[var(--bg-main)] flex flex-col items-center justify-center p-4">
 			<Container className="w-full max-w-sm flex flex-col items-center">
@@ -112,7 +145,7 @@ export default function SignUpPage() {
 				</div>
 
 				{errorMsg && (
-					<div className="w-full bg-red-500/10 border border-red-500 text-red-500 p-3 rounded-md mb-6 text-sm text-center">
+					<div className="w-full bg-error-main/10 border border-error-main text-error-main p-3 rounded-md mb-6 text-sm text-center">
 						{errorMsg}
 					</div>
 				)}
@@ -222,17 +255,50 @@ export default function SignUpPage() {
 				{step === 3 && (
 					<>
 						<div className="mb-6 text-center">
-							<Text textString="Conta criada!" size="4xl" weight="bold" />
+							<Text textString="Verifique seu e-mail" size="4xl" weight="bold" />
 						</div>
 						<div className="mb-8 text-center">
-							<Text textString="Sua conta foi criada com sucesso. Bem-vindo ao aplicativo!" size="base" color="--text-secondary" />
+							<Text 
+								textString={`Enviamos um link de verificação para o e-mail ${email}. Por favor, clique no link para ativar sua conta antes de fazer login.`} 
+								size="base" 
+								color="--text-secondary" 
+							/>
 						</div>
-						<div className="w-full">
+						
+						{resendMessage && (
+							<div className="w-full bg-green-500/10 border border-green-500 text-green-500 p-3 rounded-md mb-6 text-sm text-center">
+								{resendMessage}
+							</div>
+						)}
+						
+						<div className="w-full flex flex-col gap-4">
 							<a href="/login" className="w-full block">
 								<Button variant="brand" size="lg" className="w-full">
 									Ir para o login
 								</Button>
 							</a>
+
+							<div className="flex items-center justify-center gap-1.5 mt-2">
+								<Text 
+									textString="Não recebeu o e-mail?" 
+									color="--text-secondary" 
+									size="sm" 
+								/>
+								<button 
+									onClick={handleResendEmail}
+									disabled={isResending}
+									className="hover:underline focus:outline-none disabled:opacity-50 disabled:no-underline transition-opacity"
+								>
+									<Text 
+										textString={isResending ? "Reenviando..." : "Reenviar"} 
+										color="--text-primary" 
+										hoverColor="--text-primary"
+										weight="bold"
+										size="sm" 
+										cursor={isResending ? "default" : "pointer"}
+									/>
+								</button>
+							</div>
 						</div>
 					</>
 				)}

@@ -10,6 +10,7 @@
   --bg-primary: #fff;
   --text-primary: #fff;
   --text-secondary: #7c7c7c;
+  --error-main: #ef4444;
 }
 
 @theme inline {
@@ -21,6 +22,7 @@
   --color-bg-primary: var(--bg-primary);
   --color-text-primary: var(--text-primary);
   --color-text-secondary: var(--text-secondary);
+  --color-error-main: var(--error-main);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
