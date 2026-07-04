@@ -9,13 +9,11 @@ import Placeholder from "../../../public/placeholder_1024.jpg";
 import { Library, Play, ListPlus } from "lucide-react";
 import Icon from "../Icon";
 
-// Import your context and track interfaces
 import { usePlayer } from "@/app/context/PlayerContext";
 import { Track } from "../Player/index";
 
 import styles from "./SiderbarScroll.module.css"
 
-// Added 'tracks' to the interface so we can pass them to the player
 export interface SidebarItem {
   id: string;
   title: string;
@@ -30,16 +28,11 @@ interface SidebarProps {
 }
 
 export default function Sidebar({ items = [] }: SidebarProps) {
-  // --- Global Player Context ---
   const { playNow, playNext, addToQueue } = usePlayer();
-
-  // --- States ---
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
   const [activeSort, setActiveSort] = useState("Recents");
-
-  // --- Helper: Dropdown Actions (Exactly like CardTest.tsx) ---
   const getDropdownActions = (tracks: Track[]): DropdownItem[] => [
     {
       id: "play-now",
@@ -60,18 +53,12 @@ export default function Sidebar({ items = [] }: SidebarProps) {
       onSelect: () => addToQueue(tracks),
     },
   ];
-
-  // --- Filtering Logic ---
   const filteredItems = useMemo(() => {
     let result = [...items];
-
-    // 1. Filter by Tag
     if (activeFilter) {
       const typeMatch = activeFilter.replace(/s$/, "");
       result = result.filter((item) => item.type === typeMatch);
     }
-
-    // 2. Filter by Search Text
     if (searchQuery) {
       const lowerQuery = searchQuery.toLowerCase();
       result = result.filter(
@@ -80,8 +67,6 @@ export default function Sidebar({ items = [] }: SidebarProps) {
           item.owner?.toLowerCase().includes(lowerQuery)
       );
     }
-
-    // 3. Apply Sorting
     if (activeSort === "Alphabetical") {
       result.sort((a, b) => a.title.localeCompare(b.title));
     }
@@ -92,12 +77,10 @@ export default function Sidebar({ items = [] }: SidebarProps) {
   return (
     <aside
       className={`h-[calc(100vh-80px)] flex flex-col gap-2 p-2 transition-all duration-300 ease-in-out ${
-        isCollapsed ? "w-[88px]" : "w-[340px]"
+        isCollapsed ? "w-[55px]" : "w-[340px]"
       }`}
     >
-      <Container className="flex flex-col bg-[var(--bg-main)] rounded-lg p-2 h-full shadow-lg min-h-0">
-
-        {/* Header & Collapse Toggle */}
+      <Container className="flex flex-col bg-bg-main rounded-lg p-2 h-full shadow-lg min-h-0">
         <div
           onClick={() => setIsCollapsed(!isCollapsed)}
           className={`flex items-center py-2 mb-2 cursor-pointer hover:text-white text-[#a7a7a7] transition-colors ${
@@ -110,8 +93,6 @@ export default function Sidebar({ items = [] }: SidebarProps) {
             <Text textString="Your Library" size="xl" color="inherit" weight="bold" />
           )}
         </div>
-
-        {/* FilterBar - Hidden when collapsed */}
         {!isCollapsed && (
           <div className="flex gap-2 w-full mb-2">
             <FilterBar
@@ -140,7 +121,6 @@ export default function Sidebar({ items = [] }: SidebarProps) {
               ))}
             </div>
           ) : (
-            // Empty State
             !isCollapsed && (
               <div className="text-center mt-12 px-4 text-zinc-400 text-sm">
                 No results found for "{searchQuery}"

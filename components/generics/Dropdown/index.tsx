@@ -34,18 +34,20 @@ export default function Dropdown({
   const handleMenuClick = (e: React.MouseEvent) => {
     e.stopPropagation();
   };
+
   useEffect(() => {
     if (isOpen && menuRef.current) {
       const rect = menuRef.current.getBoundingClientRect();
+
       if (rect.bottom > window.innerHeight) {
         setVerticalPos("top");
       } else {
         setVerticalPos("bottom");
       }
+
       if (rect.left < 0) {
         setHorizontalPos("left");
-      }
-      else if (rect.right > window.innerWidth) {
+      } else if (rect.right > window.innerWidth) {
         setHorizontalPos("right");
       }
     } else {
@@ -54,7 +56,6 @@ export default function Dropdown({
     }
   }, [isOpen, align]);
 
-  // Click outside listener
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -68,6 +69,7 @@ export default function Dropdown({
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
   useEffect(() => {
     if (!isOpen) return;
     const handler = (e: KeyboardEvent) => {
@@ -79,6 +81,7 @@ export default function Dropdown({
     document.addEventListener("keydown", handler);
     return () => document.removeEventListener("keydown", handler);
   }, [isOpen]);
+
   useEffect(() => {
     if (isOpen && menuRef.current) {
       const firstItem = menuRef.current.querySelector<HTMLButtonElement>(
@@ -92,7 +95,11 @@ export default function Dropdown({
   const horizontalClass = horizontalPos === "right" ? "right-0" : "left-0";
 
   return (
-    <div className="relative inline-block w-full" ref={dropdownRef}>
+    <div
+      className="relative inline-block w-full"
+      ref={dropdownRef}
+      data-state={isOpen ? "open" : "closed"}
+    >
       <button
         ref={triggerRef}
         onClick={() => setIsOpen(!isOpen)}
@@ -117,9 +124,11 @@ export default function Dropdown({
               key={dropdownItem.id}
               role="menuitem"
               className="px-3 py-3 w-full text-left hover:bg-white/10 rounded-sm transition-colors duration-200 flex items-center gap-3 cursor-pointer text-white"
-              onClick={() => {
-                handleClose();
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
                 dropdownItem.onSelect?.();
+                handleClose();
               }}
             >
               {dropdownItem.icon}

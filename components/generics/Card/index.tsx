@@ -5,7 +5,7 @@ import Dropdown from "../Dropdown";
 import PinnedPlaceholder from "../../../public/pin.svg";
 import { StaticImageData } from "next/image";
 import { MoreHorizontal } from "lucide-react";
-import Placeholder from "@/public/placeholder_1024.jpg"
+import Placeholder from "@/public/placeholder_1024.jpg";
 
 export interface DropdownItem {
   id: string;
@@ -84,7 +84,7 @@ export default function Card({
 
   return (
     <div
-      className={`relative group ${layoutClasses[orientation]} bg-[${bgColor}] hover:bg-[${hoverBgColor}] cursor-pointer ${className}`}
+      className={`relative group z-0 hover:z-50 focus-within:z-50 has-[[data-state=open]]:z-50 ${layoutClasses[orientation]} bg-[${bgColor}] hover:bg-[${hoverBgColor}] cursor-pointer ${className}`}
       style={verticalClasses}
     >
       <div className="flex shrink-0 self-center">
@@ -120,7 +120,7 @@ export default function Card({
 
       {dropdownItems && dropdownItems.length > 0 && (
         <div
-          className="absolute top-2 right-0 w-full px-2 opacity-0 group-hover:opacity-100 transition-opacity z-20"
+          className="absolute top-2 right-0 w-full px-2 opacity-0 group-hover:opacity-100 focus-within:opacity-100 has-[[data-state=open]]:opacity-100 transition-opacity z-50"
           onClick={(e) => e.stopPropagation()}
         >
           <Dropdown
