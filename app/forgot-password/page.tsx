@@ -6,24 +6,65 @@ import Text from "@/components/generics/Text";
 import InputText from "@/components/generics/InputText";
 import Button from "@/components/generics/Button";
 import Link from "@/components/generics/Link";
-import Icon from "@/components/generics/Icon";
 
 export default function ForgotPasswordPage() {
 	const [step, setStep] = useState(1);
+	const [email, setEmail] = useState("");
+	const [isLoading, setIsLoading] = useState(false);
+	const [errorMsg, setErrorMsg] = useState("");
+
+	const handleSendResetLink = async () => {
+		setErrorMsg("");
+		
+		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+		if (!emailRegex.test(email)) {
+			setErrorMsg("Formato de e-mail inválido.");
+			return;
+		}
+
+		setIsLoading(true);
+
+		try {
+			const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+			const response = await fetch(`${apiUrl}/forgot-password`, {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ email }),
+			});
+
+			const data = await response.json();
+
+			if (!response.ok) {
+				throw new Error(data.message || data.error || "Erro ao solicitar redefinição de senha.");
+			}
+
+			setStep(2);
+		} catch (error: any) {
+			setErrorMsg(error.message);
+		} finally {
+			setIsLoading(false);
+		}
+	};
 
 	return (
 		<Container className="min-h-screen bg-[var(--bg-main)] flex flex-col items-center justify-center p-4">
 			<Container className="w-full max-w-sm flex flex-col items-center">
 
+				{errorMsg && (
+					<div className="w-full bg-error-main/10 border border-error-main text-error-main p-3 rounded-md mb-6 text-sm text-center">
+						{errorMsg}
+					</div>
+				)}
+
 				{step === 1 && (
 					<>
 						<div className="mb-6 text-center">
-							<Text textString="Redefinir senha" size="20px" weight="bold" />
+							<Text textString="Redefinir senha" size="2xl" weight="bold" />
 						</div>
 						<div className="mb-8 text-center">
 							<Text
-								textString="Insira o e-mail associado à sua conta e enviaremos um código de recuperação." 
-								size="16px" 
+								textString="Insira o e-mail associado à sua conta e enviaremos um link de recuperação." 
+								size="base" 
 								color="--text-secondary" 
 							/>
 						</div>
@@ -34,15 +75,18 @@ export default function ForgotPasswordPage() {
 								type="email"
 								variant="defaultOutline"
 								fullWidth
+								value={email}
+								onChange={(e) => setEmail(e.target.value)}
 							/>
 							
 							<Button 
 								variant="brand" 
 								size="lg" 
 								className="w-full"
-								onClick={() => setStep(2)} // Simula o envio do e-mail enquanto não temos o backend pronto.
+								onClick={handleSendResetLink}
+								disabled={isLoading}
 							>
-								Enviar código
+								{isLoading ? "Enviando..." : "Enviar link"}
 							</Button>
 						</div>
 					</>
@@ -51,112 +95,29 @@ export default function ForgotPasswordPage() {
 				{step === 2 && (
 					<>
 						<div className="mb-6 text-center">
-							<Text textString="Insira o código" size="20px" weight="bold" />
+							<Text textString="Verifique seu e-mail" size="2xl" weight="bold" />
 						</div>
 						<div className="mb-8 text-center">
 							<Text 
-								textString="Insira o código de 6 dígitos que enviamos para o seu e-mail." 
-								size="16px" 
+								textString={`Enviamos um link de recuperação para o e-mail ${email}. Clique nele para criar uma nova senha.`} 
+								size="base" 
 								color="--text-secondary" 
 							/>
 						</div>
-						
-						<div className="w-full flex flex-col gap-6">
-							<InputText
-								label="Código de recuperação"
-								type="text"
-								maxLength={6}
-								variant="defaultOutline"
-								className="text-center tracking-[0.5em] text-lg font-bold"
-								fullWidth
-							/>
-							
-							<Button 
-								variant="brand" 
-								size="lg" 
-								className="w-full"
-								onClick={() => setStep(3)} // Simula a validação do código enquanto não temos o backend pronto.
-							>
-								Verificar código
-							</Button>
-						</div>
 					</>
 				)}
 
-				{step === 3 && (
-					<>
-						<div className="mb-6 text-center">
-							<Text textString="Criar nova senha" size="20px" weight="bold" />
-						</div>
-						
-						<div className="w-full flex flex-col gap-5">
-							<InputText
-								label="Nova senha"
-								type="password"
-								variant="defaultOutline"
-								fullWidth
-							/>
-							<InputText
-								label="Confirmar nova senha"
-								type="password"
-								variant="defaultOutline"
-								fullWidth
-							/>
-							
-							<Button 
-								variant="brand" 
-								size="lg" 
-								className="w-full mt-2"
-								onClick={() => setStep(4)} // Simula a alteração da senha enquanto não temos o backend pronto.
-							>
-								Salvar nova senha
-							</Button>
-						</div>
-					</>
-				)}
-
-				{step === 4 && (
-					<>
-						<div className="mb-6 text-center">
-							<Text textString="Senha atualizada!" size="20px" weight="bold" />
-						</div>
-						<div className="mb-8 text-center">
-							<Text 
-								textString="Sua senha foi redefinida com sucesso. Você já pode fazer login com a nova senha." 
-								size="16px" 
-								color="--text-secondary" 
-							/>
-						</div>
-						
-						<div className="w-full">
-							<a href="/login" className="w-full block">
-								<Button 
-									variant="brand" 
-									size="lg" 
-									className="w-full"
-								>
-									Ir para o login
-								</Button>
-							</a>
-						</div>
-					</>
-				)}
-
-				{step < 4 && (
-					<>
-						<div className="w-full h-px bg-[var(--bg-secondary)] opacity-30 my-8"></div>
-						<div className="flex flex-col items-center gap-4">
-							<Link
-								text="Voltar para o login"
-								pathName="/login"
-                                queryKey=""
-								color="--text-primary"
-								hoverColor="--bg-brand"
-								size="base"
-							/>
-						</div>
-					</>
-				)}
+				<div className="w-full h-px bg-[var(--bg-secondary)] opacity-30 my-8"></div>
+				<div className="flex flex-col items-center gap-4">
+					<Link
+						text="Voltar para o login"
+						pathName="/login"
+						queryKey=""
+						color="--text-primary"
+						hoverColor="--bg-brand"
+						size="base"
+					/>
+				</div>
 
 			</Container>
 		</Container>
