@@ -15,6 +15,12 @@ export default function NavBar() {
 
   const [searchValue, setSearchValue] = useState(searchParams.get("q") || "");
   useEffect(() => {
+    const currentQuery = searchParams.get("q") || "";
+    
+    if (searchValue === currentQuery) {
+        return;
+    }
+
     const delayDebounceFn = setTimeout(() => {
       const params = new URLSearchParams(searchParams.toString());
 
@@ -28,6 +34,19 @@ export default function NavBar() {
 
     return () => clearTimeout(delayDebounceFn);
   }, [searchValue, pathname, router, searchParams]);
+
+  const hiddenRoutes = [
+    "/login",
+    "/signup", 
+    "/forgot-password", 
+    "/reset-password",
+    "/verify-email"
+  ];
+
+  if (hiddenRoutes.includes(pathname)) {
+    return null;
+  }
+
 
   return (
     <header className="flex items-center justify-between px-6 py-2 w-full bg-black">
