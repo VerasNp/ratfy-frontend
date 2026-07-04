@@ -60,7 +60,7 @@ export default function GenericContentPage({
   const calculatedDuration = durationTotal || tracks.reduce((acc, curr) => acc + (curr.duration || 0), 0);
 
   return (
-    <div className="flex flex-col w-full min-h-screen bg-bg-main text-white pb-32">
+    <div className="flex flex-col w-full h-auto bg-bg-main text-white pb-32">
       <ContentHeader
         id={id}
         title={title}

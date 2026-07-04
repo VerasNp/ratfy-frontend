@@ -76,7 +76,7 @@ export default function Sidebar({ items = [] }: SidebarProps) {
 
   return (
     <aside
-      className={`h-[calc(100vh-80px)] flex flex-col gap-2 p-2 transition-all duration-300 ease-in-out ${
+      className={`h-[calc(100vh-140px)] flex flex-col static gap-2 p-2 transition-all duration-300 ease-in-out ${
         isCollapsed ? "w-[55px]" : "w-[340px]"
       }`}
     >

@@ -19,18 +19,18 @@ export default function ContentPageTest() {
             contentViews={2450000}
             isLiked={true}
       />
-      <GenericContentPage
-            id={content2.id}
-            title={content2.title}
-            type={content2.albumType as "Playlist" | "Album" | "Single"}
-            coverUrl={content2.albumArtUrl || Placeholder.src}
-            tracks={[content3]}
-            artists={content2.artistIds || content2.artistIds || ["Unknown Artist"]}
-            releaseDate={content2.createdAt}
-            totalTracks={content2.totalTracks}
-            contentViews={2450000}
-            isLiked={true}
-      />
+        <GenericContentPage
+              id={content2.id}
+              title={content2.title}
+              type={content2.albumType as "Playlist" | "Album" | "Single"}
+              coverUrl={content2.albumArtUrl || Placeholder.src}
+              tracks={[content3]}
+              artists={content2.artistIds || content2.artistIds || ["Unknown Artist"]}
+              releaseDate={content2.createdAt}
+              totalTracks={content2.totalTracks}
+              contentViews={2450000}
+              isLiked={true}
+        />
     </>
   )
 }

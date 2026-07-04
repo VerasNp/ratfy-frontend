@@ -7,6 +7,7 @@ import Sidebar from "@/components/generics/Sidebar"
 import { mockedPlaylist,mockedPlaylists,mockedAlbums } from "./test/TrackList";
 import { SidebarItem } from "@/components/generics/Sidebar";
 
+
 export default function Home() {
   const popularTracks = mockedPlaylist.slice(0, 40);
   const sidebarData: SidebarItem[] = [
@@ -37,12 +38,14 @@ export default function Home() {
   ];
   return (
       <main className="min-h-screen bg-linear-to-b from-gray-900 to-black text-white pb-32">
-        <Sidebar items={sidebarData}>
-        </Sidebar>
-        <ContentPageTest>
 
-        </ContentPageTest>
-        <CardTest />
+        <div className="flex flex-row h-[calc(100vh-150px)]">
+          <Sidebar items={sidebarData} />
+          <div className="flex flex-col overflow-y-scroll">
+            <ContentPageTest/>
+            <CardTest/>
+          </div>
+        </div>
         <Player />
       </main>
   );
