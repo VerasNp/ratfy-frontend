@@ -119,17 +119,12 @@ export default function Sidebar({ items = [] }: SidebarProps) {
             />
           </div>
         )}
-
-        {/*
-          Content List
-          Changed to flex-1, min-h-0, and overflow-y-auto to allow scrolling!
-        */}
         <div className="flex-1 overflow-y-auto min-h-0 custom-scrollbar mt-2">
           {filteredItems.length > 0 ? (
             <div className="flex flex-col gap-1 w-full pb-4">
               {filteredItems.map((item) => (
                 <Card
-                  key={item.id}
+                  key={`${item.type}-${item.id}`}
                   title={item.title}
                   subtitle={""}
                   imageSrc={item.imageUrl || Placeholder.src}
@@ -138,7 +133,7 @@ export default function Sidebar({ items = [] }: SidebarProps) {
                   orientation="horizontal"
                   bgColor="transparent"
                   hoverBgColor="var(--bg-elevated-highlight)"
-                  dropdownItems={getDropdownActions(item.tracks)} // Attach the interactive dropdowns!
+                  dropdownItems={getDropdownActions(item.tracks)}
                 />
               ))}
             </div>
