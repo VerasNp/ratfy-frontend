@@ -1,5 +1,4 @@
 .scrollSidebarContainer {
-  height: 100%;
   scrollbar-width: thin;
   scrollbar-color: transparent transparent;
 }

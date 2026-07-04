@@ -76,11 +76,14 @@ export default function Sidebar({ items = [] }: SidebarProps) {
 
   return (
     <aside
-      className={`h-[calc(100vh-140px)] flex flex-col static gap-2 p-2 transition-all duration-300 ease-in-out ${
-        isCollapsed ? "w-[55px]" : "w-[340px]"
-      }`}
+      className={`
+        h-[calc(100vh-140px)]
+        flex flex-col gap-2 p-2
+        transition-all duration-200 ease-in-out
+        ${isCollapsed ? "w-[55px]" : "w-100"}
+        `}
     >
-      <Container className="flex flex-col bg-bg-main rounded-lg p-2 h-full shadow-lg min-h-0">
+      <Container className="flex flex-col bg-bg-main rounded-lg p-2 h-full shadow-lg">
         <div
           onClick={() => setIsCollapsed(!isCollapsed)}
           className={`flex items-center py-2 mb-2 cursor-pointer hover:text-white text-[#a7a7a7] transition-colors ${
