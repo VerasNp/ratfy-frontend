@@ -20,7 +20,6 @@ interface GenericContentPageProps {
   isLiked?: boolean;
 }
 
-// Helper to convert seconds into the "M:SS" string format expected by the TrackTable
 function formatTime(seconds?: number): string {
   if (!seconds || isNaN(seconds)) return "0:00";
   const mins = Math.floor(seconds / 60);
@@ -42,10 +41,7 @@ export default function GenericContentPage({
   isLiked = false,
 }: GenericContentPageProps) {
 
-  // 1. Determine the layout variant for the TrackTable
   const tableVariant = type === "Playlist" ? "playlist" : "album";
-
-  // 2. Adapt the Player Tracks into the format expected by TrackTableItem
   const tableTracks: TableTrack[] = tracks.map((t) => ({
     id: t.id,
     title: t.title,
@@ -53,10 +49,8 @@ export default function GenericContentPage({
     album: t.album,
     duration: formatTime(t.duration),
     coverUrl: t.albumArtUrl,
-    dateAdded: new Date().toLocaleDateString(), // Mocking date added
+    dateAdded: new Date().toLocaleDateString(),
   }));
-
-  // Calculate total duration for the header if not explicitly provided
   const calculatedDuration = durationTotal || tracks.reduce((acc, curr) => acc + (curr.duration || 0), 0);
 
   return (

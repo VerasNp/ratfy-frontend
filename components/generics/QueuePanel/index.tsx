@@ -25,10 +25,8 @@ export function QueuePanel({
   onQueueRemove,
   onQueueClear,
 }: QueuePanelProps) {
-  // Both as state — never read refs during render
   const [dragIndex, setDragIndex] = useState<number | null>(null)
   const [overIndex, setOverIndex] = useState<number | null>(null)
-
   const handleDragStart = (index: number) => {
     setDragIndex(index)
   }
@@ -63,8 +61,6 @@ export function QueuePanel({
   return (
     <div className="fixed bottom-[88px] right-4 z-50 w-80 h-[80vh] bg-[#121212]
                     rounded-lg border border-white/10 flex flex-col overflow-x-hidden">
-
-      {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 shrink-0 border-b border-white/10">
         <span className="text-white font-bold text-base">Queue</span>
         <div className='flex gap-3'>
@@ -95,7 +91,6 @@ export function QueuePanel({
           <QueueTrackRow track={currentTrack} isPlaying />
         )}
 
-        {/* Queue */}
         {queue.length > 0 ? (
           <>
             <div className={`
