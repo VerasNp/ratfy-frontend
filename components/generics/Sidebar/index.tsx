@@ -6,7 +6,7 @@ import Card, { DropdownItem } from "../Card/index";
 import Text from "../Text/index";
 import FilterBar from "./filterBar";
 import Placeholder from "../../../public/placeholder_1024.jpg";
-import { Library, Play, ListPlus } from "lucide-react";
+import { Library, Play, ListPlus, ArrowRightToLine } from "lucide-react";
 import Icon from "../Icon";
 
 import { usePlayer } from "@/app/context/PlayerContext";
@@ -88,7 +88,7 @@ export default function Sidebar({ items = [] }: SidebarProps) {
           }`}
           title="Collapse/Expand Your Library"
         >
-          <Icon src={Library} size={28} />
+          <Icon src={isCollapsed ? ArrowRightToLine : Library} size={28} />
           {!isCollapsed && (
             <Text textString="Your Library" size="xl" color="inherit" weight="bold" />
           )}
