@@ -1,0 +1,32 @@
+.scrollSidebarContainer {
+  height: 100%;
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+}
+
+.scrollSidebarContainer:hover {
+  scrollbar-color: #888 transparent;
+}
+
+.scrollSidebarContainer::-webkit-scrollbar {
+  width: 8px;
+}
+
+.scrollSidebarContainer::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollSidebarContainer::-webkit-scrollbar-thumb {
+  background-color: transparent;
+  border-radius: 10px;
+}
+
+/* Show the thumb when hovering over the container */
+.scrollSidebarContainer:hover::-webkit-scrollbar-thumb {
+  background-color: #888; /* Color of the scrollbar */
+}
+
+/* Optional: Darken slightly when actively hovering over the scrollbar itself */
+.scrollSidebarContainer::-webkit-scrollbar-thumb:hover {
+  background-color: #555;
+}

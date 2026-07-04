@@ -13,6 +13,8 @@ import Icon from "../Icon";
 import { usePlayer } from "@/app/context/PlayerContext";
 import { Track } from "../Player/index";
 
+import styles from "./SiderbarScroll.module.css"
+
 // Added 'tracks' to the interface so we can pass them to the player
 export interface SidebarItem {
   id: string;
@@ -119,7 +121,7 @@ export default function Sidebar({ items = [] }: SidebarProps) {
             />
           </div>
         )}
-        <div className="flex-1 overflow-y-auto min-h-0 custom-scrollbar mt-2">
+        <div className={`flex-1 overflow-y-auto min-h-0 custom-scrollbar mt-2 ${styles.scrollSidebarContainer}`}>
           {filteredItems.length > 0 ? (
             <div className="flex flex-col gap-1 w-full pb-4">
               {filteredItems.map((item) => (
