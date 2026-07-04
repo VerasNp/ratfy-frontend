@@ -1,8 +1,7 @@
-'use client'
+'use client';
 import React, { useState, useRef, useEffect } from "react";
 import InputText from "../InputText/index";
-import SearchIcon from "../../../public/search-icon.svg";
-import IndentIcon from "../../../public/indent.svg";
+import { Search as SearchIcon, Indent as IndentIcon} from "lucide-react"
 import Button from "../Button/index";
 import Text from "../Text/index";
 import Image from "../Image/index";
@@ -31,48 +30,20 @@ interface FilterBarProps {
   onSearchChange?: (query: string) => void;
 }
 
-export default function FilterBar(
-  {
-    onFilterChange,
-    onSortChange,
-    onSearchChange,
-  }: FilterBarProps
-
-) {
+export default function FilterBar({
+  onFilterChange,
+  onSortChange,
+  onSearchChange,
+}: FilterBarProps) {
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState<FilterType | null>(null);
   const [sortOpen, setSortOpen] = useState(false);
   const [activeSort, setActiveSort] = useState<SortOption>("Recents");
- 
+
   const dropdownRef = useRef<HTMLDivElement>(null);
   const searchRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    if (searchOpen) {
-      searchInputRef.current?.focus();
-    }
-  }, [searchOpen]);
-  useEffect(() => {
-    function handleClickOutside(e: MouseEvent) {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(e.target as Node)
-      ) {
-        setSortOpen(false);
-        
-      }
-      if (
-        searchRef.current &&
-        !searchRef.current.contains(e.target as Node)
-      ) {
-        handleSearchClose();
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
   function handleFilterClick(filter: FilterType) {
     const next = activeFilter === filter ? null : filter;
     setActiveFilter(next);
@@ -95,6 +66,31 @@ export default function FilterBar(
     setSearchQuery(e.target.value);
     onSearchChange?.(e.target.value);
   }
+  useEffect(() => {
+    if (searchOpen) {
+      searchInputRef.current?.focus();
+    }
+  }, [searchOpen]);
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(e.target as Node)
+      ) {
+        setSortOpen(false);
+
+      }
+      if (
+        searchRef.current &&
+        !searchRef.current.contains(e.target as Node)
+      ) {
+        handleSearchClose();
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
 
   return (
     <Container className="flex flex-col gap-3 w-full ">
@@ -206,5 +202,4 @@ export default function FilterBar(
       </Container>
     </Container>
   );
-
 }
