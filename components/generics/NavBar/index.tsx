@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
-import { Home, Search, Library, Music } from "lucide-react";
+import { Home, Search, Music } from "lucide-react";
 import Button from "../Button";
 import InputText from "../InputText";
 import Icon from "../Icon";
@@ -14,20 +14,27 @@ export default function NavBar() {
   const searchParams = useSearchParams();
 
   const [searchValue, setSearchValue] = useState(searchParams.get("q") || "");
-  useEffect(() => {
-    const delayDebounceFn = setTimeout(() => {
-      const params = new URLSearchParams(searchParams.toString());
 
-      if (searchValue) {
-        params.set("q", searchValue);
-      } else {
-        params.delete("q");
-      }
-      router.replace(`${pathname}?${params.toString()}`);
-    }, 300);
+  // 1. Dedicated search function to update the URL
+  const handleSearch = () => {
+    const params = new URLSearchParams(searchParams.toString());
 
-    return () => clearTimeout(delayDebounceFn);
-  }, [searchValue, pathname, router, searchParams]);
+    if (searchValue.trim()) {
+      params.set("q", searchValue.trim());
+    } else {
+      params.delete("q");
+    }
+
+    router.replace(`${pathname}?${params.toString()}`);
+  };
+
+  // 2. Handler for the "Enter" key
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleSearch();
+    }
+  };
 
   return (
     <header className="flex items-center justify-between px-6 py-2 w-full bg-black">
@@ -39,7 +46,7 @@ export default function NavBar() {
           variant="ghost"
           size="icon"
           label="Home"
-          className="w-12 h-12 bg-bg-elevated-highlight hover:scale-105 transition-transform duration-200 text-white rounded-full"
+          className="w-12 h-12 bg-[var(--bg-elevated-highlight)] hover:scale-105 transition-transform duration-200 text-white rounded-full"
           onClick={() => {
             setSearchValue("");
             router.push('/');
@@ -52,8 +59,11 @@ export default function NavBar() {
             variant="rounded"
             size="md"
             placeholder="What do you want to play?"
-            leftIcon={Search}
-            rightIcon={{ icon: Library, action: "button" }}
+            // 3. Set the Search icon as a clickable button on the right side
+            rightIcon={{ icon: Search, action: "button" }}
+            onRightIconClick={handleSearch}
+            // 4. Attach the Enter key listener
+            onKeyDown={handleKeyDown}
             clearable
             fullWidth
             value={searchValue}
@@ -61,9 +71,9 @@ export default function NavBar() {
           />
         </div>
       </div>
-      <div className="flex items-center gap-6 text-text-secondary">
+      <div className="flex items-center gap-6 text-[var(--text-secondary)]">
         <div className="flex items-center justify-center p-1 rounded-full bg-black cursor-pointer hover:scale-105 transition-transform duration-200">
-        <Image src="/avatar.png" alt="User avatar" size={32} className="rounded-full"/>
+          <Image src="/avatar.png" alt="User avatar" size={32} className="rounded-full"/>
         </div>
       </div>
     </header>
