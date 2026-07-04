@@ -5,6 +5,7 @@ import { X, Eraser } from 'lucide-react'
 import { Track } from '../Player'
 import Icon from '../Icon'
 import { QueueTrackRow } from './QueueTrackRow'
+import styles from "../Sidebar/SiderbarScroll.module.css"
 export interface QueuePanelProps {
   currentTrack:   Track | null
   queue:          Track[]
@@ -24,10 +25,8 @@ export function QueuePanel({
   onQueueRemove,
   onQueueClear,
 }: QueuePanelProps) {
-  // Both as state — never read refs during render
   const [dragIndex, setDragIndex] = useState<number | null>(null)
   const [overIndex, setOverIndex] = useState<number | null>(null)
-
   const handleDragStart = (index: number) => {
     setDragIndex(index)
   }
@@ -61,9 +60,7 @@ export function QueuePanel({
 
   return (
     <div className="fixed bottom-[88px] right-4 z-50 w-80 h-[80vh] bg-[#121212]
-                    rounded-lg border border-white/10 flex flex-col overflow-hidden">
-
-      {/* Header */}
+                    rounded-lg border border-white/10 flex flex-col overflow-x-hidden">
       <div className="flex items-center justify-between px-4 py-3 shrink-0 border-b border-white/10">
         <span className="text-white font-bold text-base">Queue</span>
         <div className='flex gap-3'>
@@ -84,21 +81,23 @@ export function QueuePanel({
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto py-2">
+      <div className={`flex-1 overflow-y-auto py-2 ${styles.scrollSidebarContainer}`}>
+        <p className={`px-4 py-1 text-[11px] font-bold text-zinc-500 uppercase tracking-wider
 
-        {/* Now playing — not draggable, not removable */}
-        <p className="px-4 py-1 text-[11px] font-bold text-zinc-500 uppercase tracking-wider">
+        `}>
           Now playing
         </p>
         {currentTrack && (
           <QueueTrackRow track={currentTrack} isPlaying />
         )}
 
-        {/* Queue */}
         {queue.length > 0 ? (
           <>
-            <div className="mx-4 my-2 border-t border-white/10" />
-            <p className="px-4 py-1 text-[11px] font-bold text-zinc-500 uppercase tracking-wider">
+            <div className={`
+              mx-4 my-2 border-t border-white/10
+
+              `} />
+            <p className={`px-4 py-1 text-[11px] font-bold text-zinc-500 uppercase tracking-wider `}>
               Next in queue
             </p>
 
@@ -116,6 +115,7 @@ export function QueuePanel({
                     ? 'border-green-500'
                     : 'border-transparent'
                   }
+
                 `}
               >
                 <QueueTrackRow

@@ -19,7 +19,7 @@ interface PlayerContextType {
 const PlayerContext = createContext<PlayerContextType | undefined>(undefined);
 
 export function PlayerProvider({ children }: { children: React.ReactNode }) {
-  const [queue, setQueue] = useState<Track[]>(mockedPlaylist.slice(0, 5));
+  const [queue, setQueue] = useState<Track[]>(mockedPlaylist.slice(0, 30));
   const [currentTrack, setCurrentTrack] = useState<Track | null>(queue[0] || null);
   const [isPlaying, setIsPlaying] = useState(false);
 

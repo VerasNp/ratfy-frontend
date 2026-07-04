@@ -39,7 +39,6 @@ export function QueueTrackRow({
         ${isDragging ? 'opacity-50 bg-white/10 ring-1 ring-white/20' : ''}
       `}
     >
-      {/* Drag handle — only visible on hover */}
       <div
         {...dragHandleProps}
         className="shrink-0 text-zinc-600 group-hover:text-zinc-400
@@ -49,8 +48,6 @@ export function QueueTrackRow({
       >
         <GripVertical size={14} />
       </div>
-
-      {/* Album art */}
       <div
         className="relative shrink-0 w-10 h-10"
         onClick={onClick}
