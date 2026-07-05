@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useState, useMemo } from "react";
 import Container from "../Container/index";
 import Card, { DropdownItem } from "../Card/index";
@@ -8,11 +7,11 @@ import FilterBar from "./filterBar";
 import Placeholder from "../../../public/placeholder_1024.jpg";
 import { Library, Play, ListPlus, ArrowRightToLine } from "lucide-react";
 import Icon from "../Icon";
-
 import { usePlayer } from "@/app/context/PlayerContext";
 import { Track } from "../Player/index";
-
-import styles from "./SiderbarScroll.module.css"
+import styles from "./SiderbarScroll.module.css";
+import { useUserContext } from "@/app/context/UserContext";
+import { mockedPlaylists, mockedArtists } from "@/app/test/TrackList";
 
 export interface SidebarItem {
   id: string;
@@ -23,16 +22,15 @@ export interface SidebarItem {
   tracks: Track[];
 }
 
-interface SidebarProps {
-  items?: SidebarItem[];
-}
-
-export default function Sidebar({ items = [] }: SidebarProps) {
+export default function Sidebar() {
   const { playNow, playNext, addToQueue } = usePlayer();
+  const { playlists, followedArtists, favorites } = useUserContext();
+
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
   const [activeSort, setActiveSort] = useState("Recents");
+
   const getDropdownActions = (tracks: Track[]): DropdownItem[] => [
     {
       id: "play-now",
@@ -53,6 +51,50 @@ export default function Sidebar({ items = [] }: SidebarProps) {
       onSelect: () => addToQueue(tracks),
     },
   ];
+
+
+  const items = useMemo(() => {
+    const resolvedItems: SidebarItem[] = [];
+    playlists.forEach(playlistId => {
+      const p = mockedPlaylists.find(x => x.id === playlistId);
+      if (p) {
+        resolvedItems.push({
+          id: p.id,
+          title: p.title,
+          type: "Playlist",
+          imageUrl: p.albumArtUrl,
+          owner: Array.isArray(p.artistsIds) ? p.artistsIds.join(", ") : p.artistsIds,
+          tracks: p.tracks
+        });
+      }
+    });
+    followedArtists.forEach(artistId => {
+      const a = mockedArtists.find(x => x.id === artistId);
+      if (a) {
+        resolvedItems.push({
+          id: a.id,
+          title: a.name,
+          type: "Artist",
+          imageUrl: Placeholder.src,
+          owner: "Artist",
+          tracks: []
+        });
+      }
+    });
+    const favArray = Array.isArray(favorites) ? favorites : (favorites ? [favorites] : []);
+    favArray.forEach(fav => {
+      resolvedItems.push({
+        id: fav.id,
+        title: fav.title,
+        type: "Single",
+        imageUrl: fav.imageUrl,
+        owner: fav.owner || "Unknown Artist",
+        tracks: fav.tracks || []
+      });
+    });
+
+    return resolvedItems;
+  }, [playlists, followedArtists, favorites]);
   const filteredItems = useMemo(() => {
     let result = [...items];
     if (activeFilter) {
@@ -70,7 +112,6 @@ export default function Sidebar({ items = [] }: SidebarProps) {
     if (activeSort === "Alphabetical") {
       result.sort((a, b) => a.title.localeCompare(b.title));
     }
-
     return result;
   }, [items, searchQuery, activeFilter, activeSort]);
 
@@ -96,6 +137,7 @@ export default function Sidebar({ items = [] }: SidebarProps) {
             <Text textString="Your Library" size="xl" color="inherit" weight="bold" />
           )}
         </div>
+
         {!isCollapsed && (
           <div className="flex gap-2 w-full mb-2">
             <FilterBar
@@ -105,6 +147,7 @@ export default function Sidebar({ items = [] }: SidebarProps) {
             />
           </div>
         )}
+
         <div className={`flex-1 overflow-y-auto min-h-0 custom-scrollbar mt-2 ${styles.scrollSidebarContainer}`}>
           {filteredItems.length > 0 ? (
             <div className="flex flex-col gap-1 w-full pb-4">

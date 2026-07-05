@@ -1,44 +1,50 @@
 "use client";
-
 import React, { useState, useEffect } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
-import { Home, Search, Library, Music } from "lucide-react";
+import { Home, Search, Music } from "lucide-react";
 import Button from "../Button";
 import InputText from "../InputText";
 import Icon from "../Icon";
 import Image from "../Image";
 
+  const hiddenRoutes = [
+    "/login",
+    "/signup",
+    "/forgot-password",
+    "/reset-password",
+    "/verify-email"
+  ];
+
 export default function NavBar() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-
   const [searchValue, setSearchValue] = useState(searchParams.get("q") || "");
+
   useEffect(() => {
-    const currentQuery = searchParams.get("q") || "";
-    
-    if (searchValue === currentQuery) {
-        return;
-    }
+    setSearchValue(searchParams.get("q") || "");
+  }, [searchParams]);
 
-    const delayDebounceFn = setTimeout(() => {
+  const handleSearch = () => {
+    if (searchValue.trim()) {
       const params = new URLSearchParams(searchParams.toString());
+      params.set("q", searchValue);
+      router.push(`/search?${params.toString()}`);
+    } else {
+      router.push(`/search`);
+    }
+  };
 
-      if (searchValue) {
-        params.set("q", searchValue);
-      } else {
-        params.delete("q");
-      }
-      router.replace(`${pathname}?${params.toString()}`);
-    }, 300);
-
-    return () => clearTimeout(delayDebounceFn);
-  }, [searchValue, pathname, router, searchParams]);
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      handleSearch();
+    }
+  };
 
   const hiddenRoutes = [
     "/login",
-    "/signup", 
-    "/forgot-password", 
+    "/signup",
+    "/forgot-password",
     "/reset-password",
     "/verify-email"
   ];
@@ -46,7 +52,6 @@ export default function NavBar() {
   if (hiddenRoutes.includes(pathname)) {
     return null;
   }
-
 
   return (
     <header className="flex items-center justify-between px-6 py-2 w-full bg-black">
@@ -61,18 +66,19 @@ export default function NavBar() {
           className="w-12 h-12 bg-bg-elevated-highlight hover:scale-105 transition-transform duration-200 text-white rounded-full"
           onClick={() => {
             setSearchValue("");
-            router.push('/');
+            router.push("/");
           }}
         >
-            <Icon src={Home} size={24} />
+          <Icon src={Home} size={24} />
         </Button>
         <div className="w-full max-w-[450px]">
           <InputText
             variant="rounded"
             size="md"
             placeholder="What do you want to play?"
-            leftIcon={Search}
-            rightIcon={{ icon: Library, action: "button" }}
+            rightIcon={{ icon: Search, action: "button" }}
+            onRightIconClick={handleSearch}
+            onKeyDown={handleKeyDown}
             clearable
             fullWidth
             value={searchValue}
@@ -82,7 +88,7 @@ export default function NavBar() {
       </div>
       <div className="flex items-center gap-6 text-text-secondary">
         <div className="flex items-center justify-center p-1 rounded-full bg-black cursor-pointer hover:scale-105 transition-transform duration-200">
-        <Image src="/avatar.png" alt="User avatar" size={32} className="rounded-full"/>
+          <Image src="/avatar.png" alt="User avatar" size={32} className="rounded-full" />
         </div>
       </div>
     </header>
