@@ -23,7 +23,6 @@ interface UserContextType {
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export function UserProvider({ children }: { children: React.ReactNode }) {
-  // Creating a simulated favored track based on the existing mocked database
   const mockFavoriteTrack: RelatedCardItem = {
     id: mockedPlaylist[0].id,
     title: mockedPlaylist[0].title,

@@ -143,7 +143,6 @@ export default function GenericContentPage({
             {tableTracks.length > 0 && (
               <div>
                 <h2 className="text-2xl font-bold mb-4 text-white">Popular</h2>
-                {/* Limits the Artist top tracks strictly to 10 entries */}
                 <TrackTable tracks={tableTracks.slice(0, 10)} variant="artist" />
               </div>
             )}
