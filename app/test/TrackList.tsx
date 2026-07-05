@@ -1,19 +1,35 @@
 import { Track } from "@/components/generics/Player";
 
-
+export type ReleaseDatePrecision = "Full" | "Half" | "Year" ;
 export interface Album {
   id:string
   title: string
   albumType: string
   releaseDate: string
-  releasePrecision?:string
+  releasePrecision?:ReleaseDatePrecision
   totalTracks: number
   label?: string
   artistIds: string[] | string
-  tracks: Track[] | Track
+  tracks: Track[]
   createdAt: string
   updatedAt?: string
   albumArtUrl?: string
+}
+export interface Playlist {
+  id: string,
+  title: string,
+  albumType: string,
+  artistIds: string | string[],
+  totalTracks: number,
+  tracks: Track[],
+  createdAt: string,
+  albumArtUrl: string,
+}
+export interface Artist {
+  id: string,
+  name: string,
+  url?: string,
+  tracks?: Track[]
 }
 
 export const mockedPlaylist: Track[] = [
@@ -440,22 +456,12 @@ export const mockedArtists = [
     name:"The Woodsmen"
   }
 ]
-export interface Playlist {
-  id: string,
-  title: string,
-  albumType: string,
-  artistsIds: string | string[],
-  totalTracks: number,
-  tracks: Track[],
-  createdAt: string,
-  albumArtUrl: string,
-}
 export const mockedPlaylists: Playlist[] = [
   {
       id: "1",
       title: "Workout Hype Playlist",
       albumType: "Playlist",
-      artistsIds: "Nokx",
+      artistIds: "Nokx",
       totalTracks: 10,
       tracks: workoutHypePlaylistTracks,
       createdAt: "28-06-2026",

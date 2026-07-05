@@ -48,7 +48,7 @@ export default function SearchPage() {
         id: `playlist-${p.id}`,
         title: p.title,
         type: "Playlist",
-        owner: Array.isArray(p.artistsIds) ? p.artistsIds.join(", ") : p.artistsIds,
+        owner: Array.isArray(p.artistIds) ? p.artistIds.join(", ") : p.artistIds,
         imageUrl: p.albumArtUrl,
         tracks: p.tracks
       })));
@@ -59,20 +59,18 @@ export default function SearchPage() {
         id: `album-${a.id}`,
         title: a.title,
         type: "Album",
-        owner: "Various Artists",
+        owner: Array.isArray(a.artistIds) ? a.artistIds.join(", ") : a.artistIds,
         imageUrl: a.albumArtUrl,
         tracks: a.tracks
       })));
     }
-
-    // 3. Artists
     if (!activeFilter || activeFilter === "Artists") {
       const artists = mockedArtists.filter(a => a.name.toLowerCase().includes(query));
       results.push(...artists.map(a => ({
         id: `artist-${a.id}`,
         title: a.name,
         type: "Artist",
-        owner: "Artist",
+        owner: a.name,
         imageUrl: Placeholder.src,
         tracks: []
       })));
@@ -95,9 +93,9 @@ export default function SearchPage() {
   }, [query, activeFilter]);
 
   return (
-    <main className="flex-1 overflow-y-auto bg-[var(--bg-main)] text-white p-6 pb-32 h-full">
+    <main className="flex-1 overflow-y-auto bg-bg-main text-white p-6 pb-32 h-full">
       {query ? (
-        <h1 className="text-2xl font-bold mb-6">Search Results for "{searchParams.get("q")}"</h1>
+        <h1 className="text-2xl font-bold mb-6">Search Results for &quot;{searchParams.get("q")}&quot;</h1>
       ) : (
         <h1 className="text-2xl font-bold mb-6">Search</h1>
       )}
