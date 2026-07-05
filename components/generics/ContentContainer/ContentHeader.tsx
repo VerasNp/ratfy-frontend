@@ -8,7 +8,7 @@ import { getColorSync } from 'colorthief';
 import { usePlayer } from "@/app/context/PlayerContext"
 import { Track } from "../Player"
 
-export type ContentType = "Album" | "Playlist" | "Track" | "Single" | "Artist" | "User" | null
+export type ContentType = "Album" | "Playlist" | "Track" | "Artist" | "User" | null
 
 interface ContentHeaderProps {
   className?: string
