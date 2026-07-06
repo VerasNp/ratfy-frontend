@@ -10,7 +10,7 @@ import { Loader2, AlertCircle, XCircle } from "lucide-react";
 export default function AlbumPage() {
     const params = useParams();
     const router = useRouter();
-    
+
     const albumId = params.id as string;
 
     const [album, setAlbum] = useState<any>(null);
@@ -20,7 +20,8 @@ export default function AlbumPage() {
 
     useEffect(() => {
         const fetchAlbum = async () => {
-            try {
+          try {
+              /*
                 const token = localStorage.getItem("accessToken");
                 if (!token) {
                     router.push("/login");
@@ -73,17 +74,18 @@ export default function AlbumPage() {
 
                 const backendData = await response.json();
                 const backendAlbum = backendData.body;
+              */
                 const fallbackMock = mockedAlbums[0]; // Mock
 
                 setAlbum({
-                    id: backendAlbum.id,
-                    title: backendAlbum.name,
+                    id: fallbackMock.id,
+                    title: fallbackMock.title,
                     type: "Album",
                     coverUrl: fallbackMock.albumArtUrl, // Mock
                     tracks: fallbackMock.tracks, // Mock
                     artists: ["Vários Artistas"],
-                    releaseDate: backendAlbum.releaseDate,
-                    totalTracks: backendAlbum.totalTracks,
+                    releaseDate: fallbackMock.releaseDate,
+                    totalTracks: fallbackMock.totalTracks,
                 });
 
             } catch (err: any) {

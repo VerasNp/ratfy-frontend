@@ -85,6 +85,8 @@ export default function GenericContentPage({
     duration: formatTime(t.duration),
     coverUrl: t.albumArtUrl,
     dateAdded: new Date().toLocaleDateString(),
+    audioUrl: t.audioUrl,
+    rawDuration: t.duration
   }));
 
   const calculatedDuration = durationTotal || tracks.reduce((acc, curr) => acc + (curr.duration || 0), 0);
