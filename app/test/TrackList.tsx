@@ -1,5 +1,6 @@
 import { Track } from "@/components/generics/Player";
-
+import { RelatedCardItem } from "@/components/generics/ContentContainer";
+import Placeholder from "@/public/placeholder_1024.jpg"
 export type ReleaseDatePrecision = "Full" | "Half" | "Year" ;
 export interface Album {
   id:string
@@ -31,6 +32,13 @@ export interface Artist {
   url?: string,
   tracks?: Track[]
 }
+export const extendedMockedArtists: RelatedCardItem[] = [
+    { id: "art-1", title: "Alok", subtitle: "Artista", imageUrl: Placeholder.src, type: "Artist", owner: "Artista", tracks: [] },
+    { id: "art-2", title: "Anitta", subtitle: "Artista", imageUrl: Placeholder.src, type: "Artist", owner: "Artista", tracks: [] },
+    { id: "art-3", title: "Vintage Culture", subtitle: "Artista", imageUrl: Placeholder.src, type: "Artist", owner: "Artista", tracks: [] },
+    { id: "art-4", title: "Ludmilla", subtitle: "Artista", imageUrl: Placeholder.src, type: "Artist", owner: "Artista", tracks: [] },
+    { id: "art-5", title: "Jorge & Mateus", subtitle: "Artista", imageUrl: Placeholder.src, type: "Artist", owner: "Artista", tracks: [] }
+];
 
 export const mockedPlaylist: Track[] = [
   {
@@ -492,3 +500,139 @@ export const mockedAlbums: Album[] = [
     albumArtUrl: "https://picsum.photos/id/51/300/300"
   }
 ];
+const mockPopularTracks = [
+    { id: "t1", title: "Hit Song 1", artist: "Artist Name", albumArtUrl: Placeholder.src, duration: "3:15", url: "" },
+    { id: "t2", title: "Hit Song 2", artist: "Artist Name", albumArtUrl: Placeholder.src, duration: "2:45", url: "" },
+    { id: "t3", title: "Hit Song 3", artist: "Artist Name", albumArtUrl: Placeholder.src, duration: "4:00", url: "" },
+];
+const mockAlbums: RelatedCardItem[] = [
+    { id: "al-1", title: "Greatest Hits", subtitle: "2023 • Álbum", imageUrl: Placeholder.src, type: "Album", owner: "Artist", tracks: [] },
+    { id: "al-2", title: "Summer Vibes", subtitle: "2021 • EP", imageUrl: Placeholder.src, type: "Album", owner: "Artist", tracks: [] },
+];
+const mockRelatedArtists: RelatedCardItem[] = [
+    { id: "art-2", title: "Anitta", subtitle: "Artista", imageUrl: Placeholder.src, type: "Artist", owner: "Artista", tracks: [] },
+    { id: "art-3", title: "Vintage Culture", subtitle: "Artista", imageUrl: Placeholder.src, type: "Artist", owner: "Artista", tracks: [] },
+];
+
+export const mockArtistsDatabase: Record<string, any> = {
+    "art-1": {
+        id: "art-1",
+        name: "Alok",
+        avatarUrl: Placeholder.src,
+        monthlyListeners: 25430900,
+        birthYear: 1991,
+        biography: "Alok Achkar Peres Petrillo é um DJ e produtor musical brasileiro de música eletrônica. Ele é conhecido mundialmente pelo seu hit 'Hear Me Now'. Tornou-se um dos maiores ícones da cena eletrônica internacional, participando dos maiores festivais do mundo e quebrando recordes de streaming em diversas plataformas.",
+        popularTracks: mockPopularTracks,
+        albums: mockAlbums,
+        relatedArtists: mockRelatedArtists
+    },
+    "art-2": {
+        id: "art-2",
+        name: "Anitta",
+        avatarUrl: Placeholder.src,
+        monthlyListeners: 35120000,
+        birthYear: 1993,
+        biography: "Larissa de Macedo Machado, mais conhecida como Anitta, é uma cantora, compositora, atriz e empresária brasileira. Começou sua carreira cantando no coral da igreja e hoje é uma das artistas latinas mais ouvidas no mundo, com sucessos globais como 'Envolver'.",
+        popularTracks: mockPopularTracks,
+        albums: mockAlbums,
+        relatedArtists: mockRelatedArtists
+    },
+    "art-3": {
+        id: "art-3",
+        name: "Vintage Culture",
+        avatarUrl: Placeholder.src,
+        monthlyListeners: 8300400,
+        birthYear: 1993,
+        biography: "Lukas Ruiz, conhecido como Vintage Culture, é um DJ e produtor brasileiro de música eletrônica. Ele ganhou enorme destaque misturando gêneros como deep house e indie pop, e hoje é atração principal em festivais como Tomorrowland e EDC.",
+        popularTracks: mockPopularTracks,
+        albums: mockAlbums,
+        relatedArtists: mockRelatedArtists
+    },
+    "art-4": {
+        id: "art-4",
+        name: "Ludmilla",
+        avatarUrl: Placeholder.src,
+        monthlyListeners: 18500200,
+        birthYear: 1995,
+        biography: "Ludmilla Oliveira da Silva é uma cantora e compositora brasileira. Ela começou sua carreira no funk carioca e, posteriormente, expandiu seu repertório para o pop, R&B e pagode, tornando-se uma das artistas mais versáteis e premiadas do Brasil, incluindo vitórias no Grammy Latino.",
+        popularTracks: mockPopularTracks,
+        albums: mockAlbums,
+        relatedArtists: mockRelatedArtists
+    },
+    "art-5": {
+        id: "art-5",
+        name: "Jorge & Mateus",
+        avatarUrl: Placeholder.src,
+        monthlyListeners: 14200000,
+        birthYear: "1982 e 1986", // Exemplo para dupla
+        biography: "Jorge & Mateus é uma das duplas sertanejas mais importantes do Brasil. Formada pelos cantores goianos Jorge Alves Barcelos e Mateus Pedro Liduário de Oliveira, eles são considerados os precursores do estilo sertanejo universitário e colecionam dezenas de hits que marcaram gerações.",
+        popularTracks: mockPopularTracks,
+        albums: mockAlbums,
+        relatedArtists: mockRelatedArtists
+    }
+};
+export const mockUsersDatabase: Record<string, any> = {
+    "user-1": {
+        id: "user-1",
+        name: "Carlos Eduardo",
+        avatarUrl: Placeholder.src,
+        createdAt: "2024-01-15T12:00:00.000Z",
+        publicPlaylists: mockedPlaylists.slice(0, 2).map(p => ({
+            id: p.id, title: p.title, subtitle: "Playlist Pública", imageUrl: p.albumArtUrl, type: "Playlist", owner: "Carlos Eduardo", tracks: p.tracks
+        })),
+        followedArtists: [extendedMockedArtists[0], extendedMockedArtists[2]],
+        followers: [
+            { id: "f-1", title: "Ana Júlia", subtitle: "Usuário", imageUrl: Placeholder.src, type: "User", owner: "Usuário", tracks: [] }
+        ]
+    },
+    "user-2": {
+        id: "user-2",
+        name: "Ana Júlia",
+        avatarUrl: Placeholder.src,
+        createdAt: "2023-05-20T14:30:00.000Z",
+        publicPlaylists: mockedPlaylists.slice(1, 3).map(p => ({
+            id: p.id, title: p.title, subtitle: "Playlist Pública", imageUrl: p.albumArtUrl, type: "Playlist", owner: "Ana Júlia", tracks: p.tracks
+        })),
+        followedArtists: [extendedMockedArtists[1], extendedMockedArtists[3], extendedMockedArtists[4]],
+        followers: [
+            { id: "f-2", title: "Bruno Henrique", subtitle: "Usuário", imageUrl: Placeholder.src, type: "User", owner: "Usuário", tracks: [] },
+            { id: "f-3", title: "Mariana Costa", subtitle: "Usuário", imageUrl: Placeholder.src, type: "User", owner: "Usuário", tracks: [] }
+        ]
+    },
+    "user-3": {
+        id: "user-3",
+        name: "Bruno Henrique",
+        avatarUrl: Placeholder.src,
+        createdAt: "2024-02-10T09:15:00.000Z",
+        publicPlaylists: [],
+        followedArtists: [extendedMockedArtists[0]],
+        followers: []
+    },
+    "user-4": {
+        id: "user-4",
+        name: "Mariana Costa",
+        avatarUrl: Placeholder.src,
+        createdAt: "2022-11-05T18:22:00.000Z",
+        publicPlaylists: mockedPlaylists.map(p => ({
+            id: p.id, title: p.title, subtitle: "Playlist Pública", imageUrl: p.albumArtUrl, type: "Playlist", owner: "Mariana Costa", tracks: p.tracks
+        })),
+        followedArtists: extendedMockedArtists, // Segue todos
+        followers: [
+            { id: "f-1", title: "Carlos Eduardo", subtitle: "Usuário", imageUrl: Placeholder.src, type: "User", owner: "Usuário", tracks: [] },
+            { id: "f-2", title: "Ana Júlia", subtitle: "Usuário", imageUrl: Placeholder.src, type: "User", owner: "Usuário", tracks: [] }
+        ]
+    },
+    "user-5": {
+        id: "user-5",
+        name: "Felipe Almeida",
+        avatarUrl: Placeholder.src,
+        createdAt: "2025-01-01T00:00:00.000Z",
+        publicPlaylists: mockedPlaylists.slice(0, 1).map(p => ({
+            id: p.id, title: p.title, subtitle: "Playlist Pública", imageUrl: p.albumArtUrl, type: "Playlist", owner: "Felipe Almeida", tracks: p.tracks
+        })),
+        followedArtists: [extendedMockedArtists[2], extendedMockedArtists[4]],
+        followers: [
+            { id: "f-4", title: "Mariana Costa", subtitle: "Usuário", imageUrl: Placeholder.src, type: "User", owner: "Usuário", tracks: [] }
+        ]
+    }
+};
