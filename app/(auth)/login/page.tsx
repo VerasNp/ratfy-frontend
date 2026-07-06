@@ -47,8 +47,11 @@ export default function LoginPage() {
 				throw new Error(data.message || data.error || "Erro ao fazer login.");
 			}
 
-			if (data.accessToken) {
-				localStorage.setItem("accessToken", data.accessToken);
+			if (data.data.accessToken) {
+				alert("achou: " + data.data.accessToken);
+				localStorage.setItem("accessToken", data.data.accessToken);
+			} else {
+				throw new Error("Token de acesso não retornado pelo servidor.");
 			}
 
 			router.push("/");

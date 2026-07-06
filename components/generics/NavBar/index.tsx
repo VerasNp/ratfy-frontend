@@ -1,23 +1,14 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { useRouter, useSearchParams, usePathname } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Home, Search, Music } from "lucide-react";
 import Button from "../Button";
 import InputText from "../InputText";
 import Icon from "../Icon";
 import Image from "../Image";
 
-  const hiddenRoutes = [
-    "/login",
-    "/signup",
-    "/forgot-password",
-    "/reset-password",
-    "/verify-email"
-  ];
-
 export default function NavBar() {
   const router = useRouter();
-  const pathname = usePathname();
   const searchParams = useSearchParams();
   const [searchValue, setSearchValue] = useState(searchParams.get("q") || "");
 
@@ -40,18 +31,6 @@ export default function NavBar() {
       handleSearch();
     }
   };
-
-  const hiddenRoutes = [
-    "/login",
-    "/signup",
-    "/forgot-password",
-    "/reset-password",
-    "/verify-email"
-  ];
-
-  if (hiddenRoutes.includes(pathname)) {
-    return null;
-  }
 
   return (
     <header className="flex items-center justify-between px-6 py-2 w-full bg-black">
