@@ -11,7 +11,6 @@ import { usePlayer } from "@/app/context/PlayerContext";
 import { Track } from "../Player/index";
 import styles from "./SiderbarScroll.module.css";
 import { useUserContext } from "@/app/context/UserContext";
-import { mockedPlaylists, mockedArtists } from "@/app/test/TrackList";
 
 export interface SidebarItem {
   id: string;
@@ -52,55 +51,83 @@ export default function Sidebar() {
     },
   ];
 
-
+  // Map Real DB items to Sidebar UI interfaces
   const items = useMemo(() => {
     const resolvedItems: SidebarItem[] = [];
-    playlists.forEach(playlistId => {
-      const p = mockedPlaylists.find(x => x.id === playlistId);
-      if (p) {
+    if (Array.isArray(playlists)) {
+      playlists.forEach((p) => {
         resolvedItems.push({
           id: p.id,
-          title: p.title,
+          title: p.name,
           type: "Playlist",
-          imageUrl: p.albumArtUrl,
-          owner: Array.isArray(p.artistsIds) ? p.artistsIds.join(", ") : p.artistsIds,
-          tracks: p.tracks
+          imageUrl: Placeholder.src, 
+          owner: p.ownerId || "Unknown",
+          tracks: p.tracks || [],
         });
-      }
-    });
-    followedArtists.forEach(artistId => {
-      const a = mockedArtists.find(x => x.id === artistId);
-      if (a) {
+      });
+    } 
+    if (Array.isArray(followedArtists)) {
+      followedArtists.forEach((a) => {
         resolvedItems.push({
           id: a.id,
-          title: a.name,
+          title: a.user?.name || "Artist",
           type: "Artist",
           imageUrl: Placeholder.src,
           owner: "Artist",
-          tracks: []
+          tracks: [],
         });
-      }
-    });
-    const favArray = Array.isArray(favorites) ? favorites : (favorites ? [favorites] : []);
-    favArray.forEach(fav => {
-      resolvedItems.push({
-        id: fav.id,
-        title: fav.title,
-        type: "Single",
-        imageUrl: fav.imageUrl,
-        owner: fav.owner || "Unknown Artist",
-        tracks: fav.tracks || []
       });
-    });
+    }
+
+    // 3. Favorites Mapping (Mixing Albums and Single Tracks)
+    if (Array.isArray(favorites)) {
+      favorites.forEach((fav) => {
+        // If it has durationMs, it's a Track (Single)
+        if (fav.durationMs !== undefined) {
+          const mappedTrack: Track = {
+            id: fav.id,
+            title: fav.title,
+            artist: fav.artists?.[0]?.name || "Unknown",
+            album: fav.album?.name,
+            albumArtUrl: Placeholder.src, 
+            audioUrl: fav.audioUrl || "",
+            duration: fav.durationMs ? Math.floor(fav.durationMs / 1000) : 0,
+          };
+
+          resolvedItems.push({
+            id: fav.id,
+            title: fav.title,
+            type: "Single",
+            imageUrl: Placeholder.src,
+            owner: mappedTrack.artist,
+            tracks: [mappedTrack],
+          });
+        } 
+        // If it has albumType, it's an Album
+        else if (fav.albumType !== undefined) {
+          resolvedItems.push({
+            id: fav.id,
+            title: fav.name,
+            type: "Album",
+            imageUrl: Placeholder.src,
+            owner: fav.label || "Album",
+            tracks: fav.tracks || [],
+          });
+        }
+      });
+    }
 
     return resolvedItems;
   }, [playlists, followedArtists, favorites]);
+
   const filteredItems = useMemo(() => {
     let result = [...items];
+
     if (activeFilter) {
-      const typeMatch = activeFilter.replace(/s$/, "");
+      const typeMatch = activeFilter.replace(/s$/, ""); 
       result = result.filter((item) => item.type === typeMatch);
     }
+
     if (searchQuery) {
       const lowerQuery = searchQuery.toLowerCase();
       result = result.filter(
@@ -109,9 +136,11 @@ export default function Sidebar() {
           item.owner?.toLowerCase().includes(lowerQuery)
       );
     }
+
     if (activeSort === "Alphabetical") {
       result.sort((a, b) => a.title.localeCompare(b.title));
     }
+
     return result;
   }, [items, searchQuery, activeFilter, activeSort]);
 
@@ -122,7 +151,7 @@ export default function Sidebar() {
         flex flex-col gap-2 p-2
         transition-all duration-200 ease-in-out
         ${isCollapsed ? "w-[55px]" : "w-100"}
-        `}
+      `}
     >
       <Container className="flex flex-col bg-bg-main rounded-lg p-2 h-full shadow-lg">
         <div
