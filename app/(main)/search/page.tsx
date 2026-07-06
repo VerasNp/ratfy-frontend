@@ -8,7 +8,7 @@ import Placeholder from "@/public/placeholder_1024.jpg";
 import { Play, ListPlus } from "lucide-react";
 import { usePlayer } from "@/app/context/PlayerContext";
 import { Track } from "@/components/generics/Player";
-import { mockedAlbums, mockedPlaylists, mockedPlaylist, mockedArtists } from "../test/TrackList";
+import { mockedAlbums, mockedPlaylists, mockedPlaylist, mockedArtists } from "../../test/TrackList";
 
 export default function SearchPage() {
   const searchParams = useSearchParams();
