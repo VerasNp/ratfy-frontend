@@ -193,6 +193,17 @@ export default function SignUpPage() {
 							<Text textString="Já tem uma conta?" color="--text-secondary" size="base" weight="medium" />
 							<Link text="Entrar" pathName="/login" queryKey="" color="--text-primary" hoverColor="--text-primary" size="base" />
 						</div>
+
+						<div className="mt-8">
+							<Link
+								text="Ir para a página inicial"
+								pathName="/"
+								queryKey=""
+								color="--text-secondary"
+								hoverColor="--bg-brand"
+								size="sm"
+							/>
+						</div>
 					</>
 				)}
 

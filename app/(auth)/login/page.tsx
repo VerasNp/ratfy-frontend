@@ -146,6 +146,17 @@ export default function LoginPage() {
 					/>
 				</div>
 
+				<div className="mt-8">
+					<Link
+						text="Ir para a página inicial"
+						pathName="/"
+						queryKey=""
+						color="--text-secondary"
+						hoverColor="--bg-brand"
+						size="sm"
+					/>
+				</div>
+
 			</Container>
 		</Container>
 	);
