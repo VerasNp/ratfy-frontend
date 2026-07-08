@@ -84,7 +84,7 @@ export default function GenericContentPage({
     album: t.album,
     duration: formatTime(t.duration),
     coverUrl: t.albumArtUrl,
-    dateAdded: new Date().toLocaleDateString(),
+    dateAdded: new Date().toLocaleDateString("pt-BR"),
     audioUrl: t.audioUrl,
     rawDuration: t.duration
   }));

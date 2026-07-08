@@ -9,9 +9,11 @@ import Button from "@/components/generics/Button";
 import Link from "@/components/generics/Link";
 import Icon from "@/components/generics/Icon";
 import { Music } from "lucide-react";
+import { useUserContext } from "@/app/context/UserContext";
 
 export default function LoginPage() {
 	const router = useRouter();
+	const { login } = useUserContext();
 
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
@@ -48,8 +50,7 @@ export default function LoginPage() {
 			}
 
 			if (data.data.accessToken) {
-				alert("achou: " + data.data.accessToken);
-				localStorage.setItem("accessToken", data.data.accessToken);
+				login(data.data.accessToken, { name: data.data.name || "", email });
 			} else {
 				throw new Error("Token de acesso não retornado pelo servidor.");
 			}
