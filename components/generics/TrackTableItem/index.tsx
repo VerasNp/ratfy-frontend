@@ -87,17 +87,27 @@ export default function TrackTableItem({ track, index, variant, gridClass }: Tra
   ];
 
   return (
-    <div className={`items-center rounded-md hover:bg-[var(--bg-elevated-highlight)] transition-colors duration-200 ${gridClass} group`}>
-      <div className="flex justify-center">
-        <Text textString={String(index)} color="--text-secondary" size="base" />
+    <div
+      onClick={() => playNow([playerTrackItem])}
+      className={`items-center rounded-md hover:bg-[var(--bg-elevated-highlight)] transition-colors duration-200 ${gridClass} group cursor-pointer`}
+    >
+      <div className="flex justify-center relative">
+        <span className="group-hover:hidden">
+          <Text textString={String(index)} color="--text-secondary" size="base" />
+        </span>
+        <span className="hidden group-hover:flex">
+          <Icon src={Play} size={16} color="var(--text-primary)" />
+        </span>
       </div>
       <div className="flex items-center gap-3 overflow-hidden">
         {showCover && track.coverUrl && (
-          <Image src={track.coverUrl} alt={`Capa de ${track.title}`} size={40} shape="square" />
+          <div onClick={(e) => e.stopPropagation()}>
+            <Image src={track.coverUrl} alt={`Capa de ${track.title}`} size={40} shape="square" />
+          </div>
         )}
         <div className="flex flex-col justify-center truncate">
           {track.trackUrl ? (
-            <div className="hover:underline w-fit max-w-full truncate">
+            <div onClick={(e) => e.stopPropagation()} className="hover:underline w-fit max-w-full truncate">
               <Link text={track.title} pathName={track.trackUrl} queryKey="" color="--text-primary" hoverColor="--text-primary" size="base" />
             </div>
           ) : (
@@ -106,7 +116,7 @@ export default function TrackTableItem({ track, index, variant, gridClass }: Tra
           <div className="flex items-center gap-1 mt-0.5">
             {showArtist && track.artist && (
               track.artistUrl ? (
-                <div className="hover:underline w-fit max-w-full truncate">
+                <div onClick={(e) => e.stopPropagation()} className="hover:underline w-fit max-w-full truncate">
                   <Link text={track.artist} pathName={track.artistUrl} queryKey="" color="--text-secondary" hoverColor="--text-primary" size="sm" />
                 </div>
               ) : (
@@ -120,7 +130,7 @@ export default function TrackTableItem({ track, index, variant, gridClass }: Tra
       {variant === "playlist" && (
         <div className="truncate">
           {track.albumUrl ? (
-            <div className="hover:underline w-fit max-w-full truncate">
+            <div onClick={(e) => e.stopPropagation()} className="hover:underline w-fit max-w-full truncate">
               <Link text={track.album || ""} pathName={track.albumUrl} queryKey="" color="--text-secondary" hoverColor="--text-primary" size="sm" />
             </div>
           ) : (
@@ -146,7 +156,10 @@ export default function TrackTableItem({ track, index, variant, gridClass }: Tra
         <div className="opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity duration-200 w-[20px] flex justify-center">
           <Dropdown
             triggerComponent={
-              <div className="text-[var(--text-secondary)] hover:text-white flex items-center justify-center transition-colors cursor-pointer">
+              <div
+                onClick={(e) => e.stopPropagation()}
+                className="text-[var(--text-secondary)] hover:text-white flex items-center justify-center transition-colors cursor-pointer"
+              >
                 <Icon src={MoreHorizontal} size={20} color="currentColor" />
               </div>
             }
