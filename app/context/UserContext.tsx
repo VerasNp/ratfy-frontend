@@ -10,7 +10,16 @@ export interface ObjectItem {
   url?: string,
 }
 
+interface UserInfo {
+  name: string;
+  email: string;
+}
+
 interface UserContextType {
+  isLoggedIn: boolean;
+  user: UserInfo | null;
+  login: (token: string, user: UserInfo) => void;
+  logout: () => void;
   favorites: RelatedCardItem[] | RelatedCardItem
   playlists: string[];
   followedArtists: string[];
@@ -23,6 +32,30 @@ interface UserContextType {
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export function UserProvider({ children }: { children: React.ReactNode }) {
+  const [isLoggedIn, setIsLoggedIn] = useState(() => {
+    if (typeof window === "undefined") return false;
+    return !!localStorage.getItem("accessToken");
+  });
+  const [user, setUser] = useState<UserInfo | null>(() => {
+    if (typeof window === "undefined") return null;
+    const stored = localStorage.getItem("user");
+    return stored ? JSON.parse(stored) : null;
+  });
+
+  const login = (token: string, userInfo: UserInfo) => {
+    localStorage.setItem("accessToken", token);
+    localStorage.setItem("user", JSON.stringify(userInfo));
+    setIsLoggedIn(true);
+    setUser(userInfo);
+  };
+
+  const logout = () => {
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("user");
+    setIsLoggedIn(false);
+    setUser(null);
+  };
+
   const mockFavoriteTrack: RelatedCardItem = {
     id: mockedPlaylist[0].id,
     title: mockedPlaylist[0].title,
@@ -34,8 +67,8 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
   };
 
   const [favorites, setFavorites] = useState<RelatedCardItem[]>([mockFavoriteTrack]);
-  const [playlists, setPlaylists] = useState<string[]>(["1"]); // Mapped to Workout Hype
-  const [followedArtists, setFollowedArtists] = useState<string[]>(["1", "2"]); // Mapped to Synthwave Squad, The Woodsmen
+  const [playlists, setPlaylists] = useState<string[]>(["1"]);
+  const [followedArtists, setFollowedArtists] = useState<string[]>(["1", "2"]);
   const [followingUsers, setFollowingUsers] = useState<string[]>([]);
 
   const setFollow = (items: ObjectItem[]) => {
@@ -50,6 +83,10 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
   return (
     <UserContext.Provider
       value={{
+        isLoggedIn,
+        user,
+        login,
+        logout,
         favorites,
         playlists,
         followedArtists,

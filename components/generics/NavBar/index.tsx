@@ -1,16 +1,19 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Home, Search, Music } from "lucide-react";
+import { Home, Search, Music, LogOut, User } from "lucide-react";
 import Button from "../Button";
 import InputText from "../InputText";
 import Icon from "../Icon";
 import Image from "../Image";
+import Dropdown from "../Dropdown";
+import { useUserContext } from "@/app/context/UserContext";
 
 export default function NavBar() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [searchValue, setSearchValue] = useState(searchParams.get("q") || "");
+  const { isLoggedIn, logout } = useUserContext();
 
   useEffect(() => {
     setSearchValue(searchParams.get("q") || "");
@@ -66,9 +69,54 @@ export default function NavBar() {
         </div>
       </div>
       <div className="flex items-center gap-6 text-text-secondary">
-        <div className="flex items-center justify-center p-1 rounded-full bg-black cursor-pointer hover:scale-105 transition-transform duration-200">
-          <Image src="/avatar.png" alt="User avatar" size={32} className="rounded-full" />
-        </div>
+        {isLoggedIn ? (
+          <Dropdown
+            align="right"
+            triggerComponent={
+              <div className="flex items-center justify-center p-1 rounded-full bg-black cursor-pointer hover:scale-105 transition-transform duration-200">
+                <Image src="/avatar.png" alt="User avatar" size={32} className="rounded-full" />
+              </div>
+            }
+            items={[
+              {
+                id: "profile",
+                icon: <User size={16} />,
+                item: <span>Perfil</span>,
+                onSelect: () => {},
+              },
+              {
+                id: "logout",
+                icon: <LogOut size={16} />,
+                item: <span>Sair</span>,
+                onSelect: () => {
+                  logout();
+                  router.push("/");
+                },
+              },
+            ]}
+          />
+        ) : (
+          <div className="flex items-center gap-3">
+            <Button
+              variant="ghost"
+              size="sm"
+              label="Entrar"
+              className="text-white hover:scale-105 transition-transform duration-200"
+              onClick={() => router.push("/login")}
+            >
+              Entrar
+            </Button>
+            <Button
+              variant="brand"
+              size="sm"
+              label="Inscrever-se"
+              className="hover:scale-105 transition-transform duration-200"
+              onClick={() => router.push("/signup")}
+            >
+              Inscrever-se
+            </Button>
+          </div>
+        )}
       </div>
     </header>
   );
