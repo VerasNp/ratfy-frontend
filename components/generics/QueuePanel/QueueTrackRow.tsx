@@ -91,7 +91,7 @@ export function QueueTrackRow({
       {onRemove && (
         <button
           onClick={(e) => { e.stopPropagation(); onRemove() }}
-          className="shrink-0 text-zinc-600 hover:text-white transition-colors
+          className="shrink-0 text-zinc-600 hover:text-white transition-colors cursor-pointer
                      opacity-0 group-hover:opacity-100 rounded-full p-0.5
                      hover:bg-white/10"
           aria-label={`Remove ${track.title} from queue`}

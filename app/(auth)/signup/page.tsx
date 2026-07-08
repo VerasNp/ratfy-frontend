@@ -287,7 +287,7 @@ export default function SignUpPage() {
 								<button 
 									onClick={handleResendEmail}
 									disabled={isResending}
-									className="hover:underline focus:outline-none disabled:opacity-50 disabled:no-underline transition-opacity"
+									className="hover:underline focus:outline-none disabled:opacity-50 disabled:no-underline transition-opacity cursor-pointer"
 								>
 									<Text 
 										textString={isResending ? "Reenviando..." : "Reenviar"} 

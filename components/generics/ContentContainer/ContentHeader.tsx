@@ -202,7 +202,7 @@ export default function ContentHeader({
           <button
             onClick={() => playNow(tracks)}
             aria-label={`${isAlbumPlaying ? "Play" : "Pause"} ${title}`}
-            className={`w-14 h-14 rounded-full bg-[#1db954] flex items-center justify-center
+            className={`w-14 h-14 rounded-full bg-[#1db954] flex items-center justify-center cursor-pointer
                        hover:bg-[#1ed760] hover:scale-105 active:scale-95
                        transition-all duration-100 shrink-0`}
           >
@@ -212,7 +212,7 @@ export default function ContentHeader({
         {isArtist || isUser ? (
           <button
             onClick={onFollow}
-            className={`px-4 py-1.5 rounded-full border text-sm font-bold tracking-widest uppercase transition-all
+            className={`px-4 py-1.5 rounded-full border text-sm font-bold tracking-widest uppercase transition-all cursor-pointer
               ${isFollow ? "border-white/50 text-white hover:border-white" : "border-white text-white hover:scale-105"}`}
           >
             {isFollow ? "Following" : "Follow"}
@@ -221,17 +221,17 @@ export default function ContentHeader({
           <button
             onClick={onLike}
             aria-label={isLiked ? `Remove ${title} from library` : `Save ${title} to library`}
-            className={`transition-colors ${isLiked ? "text-[#1db954]" : "text-white/60 hover:text-white"}`}
+            className={`transition-colors cursor-pointer ${isLiked ? "text-[#1db954]" : "text-white/60 hover:text-white"}`}
           >
             <Icon src={Heart} size={28} className={isLiked ? "fill-[#1db954]" : ""} />
           </button>
         )}
         {isPlaylist && onEdit && (
-          <button onClick={onEdit} aria-label="Edit playlist" className="text-white/60 hover:text-white transition-colors">
+          <button onClick={onEdit} aria-label="Edit playlist" className="text-white/60 hover:text-white transition-colors cursor-pointer">
             <Icon src={Pencil} size={20} />
           </button>
         )}
-        <button onClick={onMore} aria-label="More options" className="text-white/60 hover:text-white transition-colors">
+        <button onClick={onMore} aria-label="More options" className="text-white/60 hover:text-white transition-colors cursor-pointer">
           <Icon src={MoreHorizontal} size={24} />
         </button>
       </div>

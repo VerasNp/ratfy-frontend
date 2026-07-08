@@ -29,7 +29,7 @@ export default function Button({
   children,
   ...props
 }: ButtonProps) {
-  const baseStyles = 'inline-flex items-center justify-center rounded-full disabled:opacity-50 disabled:cursor-not-allowed';
+  const baseStyles = 'inline-flex items-center justify-center rounded-full cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed';
 
   const classes = [
     baseStyles,

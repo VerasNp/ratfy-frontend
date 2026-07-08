@@ -252,7 +252,7 @@ export default function Player({
 
         <div className="flex min-w-0 w-full flex-col items-center justify-center gap-1 justify-self-center">
           <div className="flex items-center gap-4">
-            <Button variant="ghost" size="icon" className="cursor-pointer" onClick={handlePrevious} aria-label="Previous track">
+            <Button variant="ghost" size="icon" onClick={handlePrevious} aria-label="Previous track">
               <Icon src={SkipBack} size={20} />
             </Button>
             <Button
@@ -260,11 +260,11 @@ export default function Player({
               size="icon"
               onClick={handlePlayPause}
               aria-label={isPlaying ? "Pause" : "Play"}
-              className="h-10 w-10 rounded-full bg-white text-black transition-transform hover:scale-105 cursor-pointer"
+              className="h-10 w-10 rounded-full bg-white text-black transition-transform hover:scale-105"
             >
               <Icon src={isPlaying ? Pause : Play} size={20} />
             </Button>
-            <Button variant="ghost" size="icon" className="cursor-pointer" onClick={handleNext} aria-label="Next track">
+            <Button variant="ghost" size="icon" onClick={handleNext} aria-label="Next track">
               <Icon src={SkipForward} size={20} />
             </Button>
           </div>
@@ -281,7 +281,6 @@ export default function Player({
           <Button
             variant="ghost"
             size="icon"
-            className="cursor-pointer"
             onClick={() => setIsQueueOpen((q) => !q)}
             aria-label="Queue"
           >
@@ -291,7 +290,7 @@ export default function Player({
             />
           </Button>
 
-          <Button variant="ghost" size="icon" className="cursor-pointer" onClick={toggleMute} aria-label={isMuted ? "Unmute" : "Mute"}>
+          <Button variant="ghost" size="icon" onClick={toggleMute} aria-label={isMuted ? "Unmute" : "Mute"}>
             <Icon src={isMuted ? VolumeX : Volume2} size={18} />
           </Button>
 

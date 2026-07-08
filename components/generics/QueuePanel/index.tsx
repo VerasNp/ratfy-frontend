@@ -66,14 +66,14 @@ export function QueuePanel({
         <div className='flex gap-3'>
           <button
             onClick={onQueueClear}
-            className="text-zinc-500 hover:text-white transition-colors"
+            className="text-zinc-500 hover:text-white transition-colors cursor-pointer"
             aria-label="Clear Queue"
           >
             <Icon src={Eraser} size={16} />
           </button>
           <button
             onClick={onClose}
-            className="text-zinc-500 hover:text-white transition-colors"
+            className="text-zinc-500 hover:text-white transition-colors cursor-pointer"
             aria-label="Close queue"
           >
             <Icon src={X} size={16} />
